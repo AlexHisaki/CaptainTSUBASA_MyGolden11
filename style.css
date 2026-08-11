@@ -1,0 +1,106 @@
+/* サッカー・キャプテン翼ライク スポーティ＆スタジアム カスタムCSS */
+
+/* サッカーピッチ芝生ストライプ背景 */
+body {
+  background-color: #07130c;
+  background-image: 
+    linear-gradient(90deg, rgba(16, 185, 129, 0.03) 50%, transparent 50%),
+    radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.15), transparent 70%),
+    radial-gradient(circle at 50% 100%, rgba(6, 182, 212, 0.1), transparent 70%);
+  background-size: 80px 100%, 100% 100%, 100% 100%;
+}
+
+/* スクロールバーのカスタマイズ */
+.custom-scrollbar::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(10, 30, 20, 0.8);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(16, 185, 129, 0.5);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(16, 185, 129, 0.9);
+}
+
+/* カードのフェードインアニメーション */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.card-animate {
+  animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* サッカートレーディングカード風 ホバーエフェクト */
+.soccer-card-hover {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.soccer-card-hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  h: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.08),
+    transparent
+  );
+  transform: skewX(-25deg);
+  transition: 0.75s;
+  pointer-events: none;
+}
+
+.soccer-card-hover:hover::before {
+  left: 150%;
+}
+
+.soccer-card-hover:hover {
+  border-color: rgba(16, 185, 129, 0.7);
+  box-shadow: 
+    0 10px 30px -5px rgba(16, 185, 129, 0.25),
+    0 0 15px rgba(245, 158, 11, 0.15);
+  transform: translateY(-4px);
+}
+
+/* キャラクタータグのホバーグラデーション */
+.char-tag {
+  transition: all 0.2s ease-in-out;
+}
+
+.char-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+/* 検索入力欄フォーカス時発光 */
+#search-input:focus {
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.3), 0 0 5px rgba(245, 158, 11, 0.2);
+}
+
+/* サッカーボール回転アニメーション（控えめ） */
+.spin-on-hover:hover .fa-futbol {
+  transform: rotate(180deg);
+  transition: transform 0.5s ease-in-out;
+}

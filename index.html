@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja" class="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>キャプテン翼マイゴールデンⅪコンボデータベース | Combo Database</title>
+  <meta name="description" content="キャプテン翼マイゴールデンⅪのコンボ・連携技情報を検索・閲覧できるリアルタイムデータベース">
+
+  <!-- Google Fonts (Rajdhani & Orbitron & Noto Sans JP) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans JP"', 'sans-serif'],
+            display: ['Orbitron', '"Noto Sans JP"', 'sans-serif'],
+            tech: ['Rajdhani', '"Noto Sans JP"', 'sans-serif']
+          },
+          colors: {
+            pitch: {
+              bg: '#07130c',
+              card: '#0d2117',
+              border: '#1b432e',
+              emerald: '#10b981',
+              lime: '#34d399',
+              gold: '#f59e0b',
+              yellow: '#fbbf24'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body
+  class="bg-pitch-bg text-gray-100 min-h-screen font-sans selection:bg-emerald-500 selection:text-black antialiased relative overflow-x-hidden">
+
+  <!-- 背景アンビエントグラデーション（スタジアムカクテルライト風） -->
+  <div class="fixed top-0 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+  <div class="fixed top-1/3 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+  <div class="fixed bottom-10 left-1/3 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- ヘッダーエリア（サッカー・スタジアムテイスト） -->
+    <header class="mb-8 text-center relative">
+
+      <!-- サッカーボール・バッジ -->
+      <div
+        class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs font-tech tracking-wider uppercase mb-3 shadow-lg shadow-emerald-950/50">
+        <i class="fa-solid fa-futbol text-amber-400 animate-spin" style="animation-duration: 12s;"></i>
+        <span>CAPTAIN TSUBASA MY GOLDEN XI • COMBO DB</span>
+      </div>
+
+      <!-- タイトル -->
+      <h1
+        class="text-3xl sm:text-5xl lg:text-6xl font-extrabold font-display tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-200 to-amber-400 drop-shadow-md mb-2 leading-tight">
+        キャプテン翼 マイゴールデンⅪ<br class="hidden sm:inline">
+        <span class="text-2xl sm:text-4xl lg:text-5xl text-emerald-300 font-tech">COMBO ARCHIVE</span>
+      </h1>
+
+      <p class="text-emerald-100/70 max-w-2xl mx-auto text-xs sm:text-sm font-medium">
+        <i class="fa-solid fa-trophy text-amber-400 mr-1"></i>
+        ゲーム内の黄金連携・特殊コンボ技をリアルタイム検索！キャラクタータグクリックで即座に絞り込み可能。
+      </p>
+
+      <!-- サポート操作（JSONファイル読み込みボタン & リセット） -->
+      <div class="mt-4 flex flex-wrap items-center justify-center gap-3">
+        <label for="json-file-input"
+          class="cursor-pointer inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-pitch-card hover:bg-emerald-900/60 border border-pitch-border text-xs text-emerald-200 transition hover:border-emerald-500/50 shadow-md">
+          <i class="fa-solid fa-file-import text-amber-400"></i>
+          <span>JSONファイルを指定して読込</span>
+          <input type="file" id="json-file-input" accept=".json" class="hidden">
+        </label>
+
+        <button id="btn-reload-default"
+          class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-pitch-card hover:bg-emerald-900/60 border border-pitch-border text-xs text-emerald-200 transition hover:border-emerald-500/50 shadow-md">
+          <i class="fa-solid fa-rotate text-emerald-400"></i>
+          <span>標準 data.json 再読み込み</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- 更新日記載 -->
+    <div class="text-center mb-6">
+      <span
+        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/70 border border-emerald-800/60 text-emerald-300/80 text-xs font-tech">
+        <i class="fa-regular fa-calendar-check text-amber-400"></i>
+        <span>最終更新日: 2026年8月11日</span>
+      </span>
+    </div>
+
+    <!-- コントロール・検索セクション -->
+    <section class="mb-8 space-y-4">
+      <!-- 検索入力エリア（サッカーフィールド検索バー） -->
+      <div class="relative max-w-3xl mx-auto">
+        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-emerald-400">
+          <i class="fa-solid fa-futbol text-xl text-amber-400"></i>
+        </div>
+        <input type="text" id="search-input" placeholder="選手名、コンボ・連携技名で検索... (例: 大空翼, ツインシュート)"
+          class="w-full pl-12 pr-12 py-3.5 sm:py-4 bg-pitch-card/90 border-2 border-pitch-border rounded-2xl text-white placeholder-emerald-200/40 focus:outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20 shadow-2xl transition-all duration-300 text-sm sm:text-base font-medium"
+          autocomplete="off">
+
+        <!-- 検索クリアボタン -->
+        <button id="btn-clear-search"
+          class="hidden absolute inset-y-0 right-0 pr-4 flex items-center text-emerald-400/60 hover:text-amber-400 transition"
+          title="検索をクリア">
+          <i class="fa-solid fa-circle-xmark text-xl"></i>
+        </button>
+      </div>
+
+      <!-- ステータス ＆ アクティブフィルター情報 -->
+      <div
+        class="flex flex-wrap items-center justify-between gap-4 max-w-5xl mx-auto text-xs sm:text-sm text-emerald-200/80 px-2">
+
+        <!-- 件数表示 (スコアボード風) -->
+        <div
+          class="flex items-center space-x-2 bg-pitch-card px-3.5 py-1.5 rounded-xl border border-pitch-border shadow-inner">
+          <i class="fa-solid fa-clipboard-list text-amber-400"></i>
+          <span class="text-emerald-200/70">検索結果:</span>
+          <span id="result-count" class="font-bold text-amber-400 font-tech text-lg">0</span>
+          <span class="text-emerald-700">/</span>
+          <span id="total-count" class="text-emerald-300 font-tech">0</span>
+          <span>件</span>
+        </div>
+
+        <!-- 選択中のキャラクターフィルター状態 -->
+        <div id="active-filter-container" class="hidden flex items-center space-x-2">
+          <span class="text-emerald-200/70">選択選手:</span>
+          <span id="active-filter-badge"
+            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 text-xs font-bold shadow">
+            <i class="fa-solid fa-shirt text-amber-400"></i>
+            <span id="active-filter-name">キャラ名</span>
+            <button id="btn-remove-char-filter" class="ml-1 text-emerald-400 hover:text-amber-400">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </span>
+        </div>
+
+        <!-- フィルター解除ボタン -->
+        <div class="flex items-center space-x-2">
+          <button id="btn-reset-all"
+            class="text-xs text-emerald-300/80 hover:text-amber-400 transition underline underline-offset-4 flex items-center gap-1">
+            <i class="fa-solid fa-filter-circle-xmark"></i>
+            <span>すべてのフィルターを解除</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 人気キャラクタークイックフィルタータグ (サッカーユニフォーム・選手タグ) -->
+      <div class="max-w-5xl mx-auto pt-2">
+        <div class="text-xs text-emerald-400/80 uppercase tracking-wider mb-2 font-tech flex items-center gap-1.5">
+          <i class="fa-solid fa-users-viewfinder text-amber-400"></i>
+          <span>選手別クイックフィルター</span>
+        </div>
+        <div id="character-tags-bar" class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1 custom-scrollbar">
+          <!-- JSで動的生成されるキャラクタータグ -->
+          <span class="text-xs text-emerald-600 italic">読み込み中...</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- メインコンテンツ：コンボカードリスト表示エリア -->
+    <main>
+      <!-- データ読み込みインジケータ -->
+      <div id="loading-spinner" class="py-20 text-center">
+        <div
+          class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-emerald-500/30 border-t-amber-400 mb-4">
+        </div>
+        <p class="text-emerald-300/70 text-sm font-medium">コンボデータをフィールドに展開中...</p>
+      </div>
+
+      <!-- エラー表示メッセージ -->
+      <div id="error-message"
+        class="hidden max-w-md mx-auto my-12 p-6 rounded-2xl bg-red-950/50 border border-red-800/80 text-center text-red-200 shadow-2xl">
+        <i class="fa-solid fa-triangle-exclamation text-4xl text-red-400 mb-3"></i>
+        <h3 class="font-bold text-lg mb-2">データの取得に失敗しました</h3>
+        <p id="error-text" class="text-xs text-red-300/80 mb-4">data.json の読み込み中にエラーが発生しました。</p>
+        <p class="text-xs text-gray-400 mb-4">上の「JSONファイルを指定して読込」ボタンから `data.json` を選択してください。</p>
+      </div>
+
+      <!-- 検索結果 0 件メッセージ -->
+      <div id="no-results" class="hidden py-16 text-center">
+        <div
+          class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-pitch-card border border-pitch-border text-emerald-500 mb-4 shadow-lg">
+          <i class="fa-solid fa-futbol text-3xl text-amber-400 opacity-60"></i>
+        </div>
+        <h3 class="text-xl font-bold text-emerald-100 mb-1">該当する連携技・コンボが見つかりませんでした</h3>
+        <p class="text-emerald-300/60 text-sm max-w-sm mx-auto mb-6">
+          検索キーワードを変更するか、選手絞り込みを解除してみてください。
+        </p>
+        <button id="btn-no-result-reset"
+          class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm transition shadow-lg shadow-amber-500/20 flex items-center gap-2 mx-auto">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span>検索条件をリセット</span>
+        </button>
+      </div>
+
+      <!-- コンボカード一覧グリッド (トレーディングカード風) -->
+      <div id="combo-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- JSにより動的にコンボカードが追加されます -->
+      </div>
+    </main>
+
+    <!-- フッター -->
+    <footer class="mt-20 pt-8 border-t border-pitch-border text-center text-xs text-emerald-400/50">
+      <p><i class="fa-solid fa-futbol text-amber-500/60 mr-1"></i> キャプテン翼 マイゴールデンⅪ コンボデータベース &copy; 2026</p>
+    </footer>
+
+  </div>
+
+  <!-- Custom JavaScript -->
+  <script src="app.js"></script>
+</body>
+
+</html>
