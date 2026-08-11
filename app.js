@@ -2,7 +2,7 @@
  * ゲームコンボデータベース - JavaScript アプリケーションロジック (キャプテン翼サッカーテーマ)
  */
 
-// ローカルファイル (file://) 直接閲覧時の CORS 制限対策用組み込みデフォルトデータ
+// ローカルファイル / ネットワークエラー時等の超安全組み込みデフォルトデータ
 const DEFAULT_COMBO_DATA = {
   "combo_001": { "combo_name": "南葛黄金コンビ", "": ["大空翼", "岬太郎"], "notes": null },
   "combo_002": { "combo_name": "ジャンピングツインシュート", "": ["大空翼", "岬太郎"], "notes": "赤カード限定" },
@@ -42,14 +42,12 @@ const DEFAULT_COMBO_DATA = {
   "combo_036": { "combo_name": "修哲からずっと一緒", "": ["井沢守", "来生哲兵", "滝一", "高杉真吾", "森崎有三"], "notes": null }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
-  // --- 状態管理 (State) ---
-  let allCombos = [];           // 正規化された全コンボデータ
-  let currentFilteredCombos = [];// 現在表示対象のコンボデータ
-  let selectedCharacterFilter = null; // タグ選択によるキャラクター絞り込み
-  let currentSearchQuery = '';   // 検索窓の入力クエリ
+function initApp() {
+  let allCombos = [];
+  let currentFilteredCombos = [];
+  let selectedCharacterFilter = null;
+  let currentSearchQuery = '';
 
-  // --- DOM Elements ---
   const searchInput = document.getElementById('search-input');
   const btnClearSearch = document.getElementById('btn-clear-search');
   const comboGrid = document.getElementById('combo-grid');
@@ -67,118 +65,102 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnNoResultReset = document.getElementById('btn-no-result-reset');
   
   const characterTagsBar = document.getElementById('character-tags-bar');
-  const jsonFileInput = document.getElementById('json-file-input');
-  const btnReloadDefault = document.getElementById('btn-reload-default');
 
-  // --- 1. 文字列正規化関数 (検索比較用) ---
   function normalizeText(str) {
     if (!str) return '';
-    return str
-      .normalize('NFKC') // 全角英数字・記号を半角へ
-      .toLowerCase()     // 大文字を小文字へ
-      .replace(/[\u30a1-\u30f6]/g, match => String.fromCharCode(match.charCodeAt(0) - 0x60)) // カタカナ->ひらがな
-      .trim();
+    try {
+      return str
+        .normalize('NFKC')
+        .toLowerCase()
+        .replace(/[\u30a1-\u30f6]/g, match => String.fromCharCode(match.charCodeAt(0) - 0x60))
+        .trim();
+    } catch (e) {
+      return String(str).toLowerCase().trim();
+    }
   }
 
-  // --- 2. データ構造の正規化関数 ---
   function normalizeComboData(rawData) {
     if (!rawData) return [];
-
     let result = [];
-
-    if (Array.isArray(rawData)) {
-      result = rawData.map((item, idx) => {
-        const id = item.id || `combo_${String(idx + 1).padStart(3, '0')}`;
-        const combo_name = item.combo_name || item.name || '名称未設定コンボ';
-        const characters = Array.isArray(item.characters) 
-          ? item.characters 
-          : (Array.isArray(item[""]) ? item[""] : []);
-        const notes = item.notes || null;
-
-        return { id, combo_name, characters, notes };
-      });
-    } else if (typeof rawData === 'object') {
-      result = Object.entries(rawData).map(([key, item], idx) => {
-        const id = item.id || key || `combo_${String(idx + 1).padStart(3, '0')}`;
-        const combo_name = item.combo_name || item.name || '名称未設定コンボ';
-        const characters = Array.isArray(item.characters) 
-          ? item.characters 
-          : (Array.isArray(item[""]) ? item[""] : []);
-        const notes = item.notes || null;
-
-        return { id, combo_name, characters, notes };
-      });
+    try {
+      if (Array.isArray(rawData)) {
+        result = rawData.map((item, idx) => ({
+          id: item.id || `combo_${String(idx + 1).padStart(3, '0')}`,
+          combo_name: item.combo_name || item.name || '名称未設定コンボ',
+          characters: Array.isArray(item.characters) ? item.characters : (Array.isArray(item[""]) ? item[""] : []),
+          notes: item.notes || null
+        }));
+      } else if (typeof rawData === 'object') {
+        result = Object.entries(rawData).map(([key, item], idx) => ({
+          id: item.id || key || `combo_${String(idx + 1).padStart(3, '0')}`,
+          combo_name: item.combo_name || item.name || '名称未設定コンボ',
+          characters: Array.isArray(item.characters) ? item.characters : (Array.isArray(item[""]) ? item[""] : []),
+          notes: item.notes || null
+        }));
+      }
+    } catch (e) {
+      console.error('Data normalize error:', e);
     }
-
     return result;
   }
 
-  // --- 3. データ取得処理 ---
-  async function fetchComboData() {
-    showLoading();
-    try {
-      const response = await fetch('data.json');
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
-      const data = await response.json();
-      allCombos = normalizeComboData(data);
-      initDatabase();
-    } catch (err) {
-      console.info('HTTP/fetchでのdata.json取得がブロックされたため、組み込みデフォルトデータを使用します:', err);
-      allCombos = normalizeComboData(DEFAULT_COMBO_DATA);
-      initDatabase();
+  function hideLoading() {
+    if (loadingSpinner) {
+      loadingSpinner.classList.add('hidden');
+      loadingSpinner.style.display = 'none'; // インラインスタイルでも確実に非表示
     }
   }
 
-  function loadJsonFromFile(file) {
-    if (!file) return;
-    showLoading();
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const data = JSON.parse(e.target.result);
-        allCombos = normalizeComboData(data);
-        initDatabase();
-      } catch (err) {
-        showError(`JSONファイルの解析エラー: ${err.message}`);
-      }
-    };
-    reader.onerror = () => {
-      showError('ファイルの読み込み中にエラーが発生しました。');
-    };
-    reader.readAsText(file);
+  function showLoading() {
+    if (loadingSpinner) {
+      loadingSpinner.classList.remove('hidden');
+      loadingSpinner.style.display = 'block';
+    }
+    if (comboGrid) comboGrid.innerHTML = '';
+    if (noResults) noResults.classList.add('hidden');
   }
 
   function initDatabase() {
     hideLoading();
-    totalCount.textContent = allCombos.length;
+    if (totalCount) totalCount.textContent = allCombos.length;
     renderCharacterQuickTags();
     applyFilterAndSearch();
   }
 
-  // --- 4. 検索 ＆ フィルタリングロジック ---
+  async function fetchComboData() {
+    showLoading();
+    let dataLoaded = false;
+    try {
+      const response = await fetch('data.json');
+      if (response.ok) {
+        const data = await response.json();
+        allCombos = normalizeComboData(data);
+        if (allCombos.length > 0) dataLoaded = true;
+      }
+    } catch (err) {
+      console.info('data.json fetch fallback:', err);
+    }
+
+    if (!dataLoaded) {
+      allCombos = normalizeComboData(DEFAULT_COMBO_DATA);
+    }
+    
+    initDatabase();
+  }
+
   function applyFilterAndSearch() {
     const normQuery = normalizeText(currentSearchQuery);
 
     currentFilteredCombos = allCombos.filter(combo => {
       if (selectedCharacterFilter) {
-        const hasChar = combo.characters.some(char => char === selectedCharacterFilter);
-        if (!hasChar) return false;
+        if (!combo.characters.includes(selectedCharacterFilter)) return false;
       }
 
       if (!normQuery) return true;
 
-      const normComboName = normalizeText(combo.combo_name);
-      if (normComboName.includes(normQuery)) return true;
-
-      const normChars = combo.characters.map(c => normalizeText(c));
-      if (normChars.some(c => c.includes(normQuery))) return true;
-
-      if (combo.notes) {
-        const normNotes = normalizeText(combo.notes);
-        if (normNotes.includes(normQuery)) return true;
-      }
+      if (normalizeText(combo.combo_name).includes(normQuery)) return true;
+      if (combo.characters.some(c => normalizeText(c).includes(normQuery))) return true;
+      if (combo.notes && normalizeText(combo.notes).includes(normQuery)) return true;
 
       return false;
     });
@@ -187,24 +169,28 @@ document.addEventListener('DOMContentLoaded', () => {
     renderComboCards(currentFilteredCombos);
   }
 
-  // --- 5. UI描画関数 ---
   function updateUIState() {
-    resultCount.textContent = currentFilteredCombos.length;
+    if (resultCount) resultCount.textContent = currentFilteredCombos.length;
 
     if (currentSearchQuery.length > 0) {
-      btnClearSearch.classList.remove('hidden');
+      btnClearSearch?.classList.remove('hidden');
     } else {
-      btnClearSearch.classList.add('hidden');
+      btnClearSearch?.classList.add('hidden');
     }
 
     if (selectedCharacterFilter) {
-      activeFilterContainer.classList.remove('hidden');
-      activeFilterContainer.classList.add('flex');
-      activeFilterName.textContent = selectedCharacterFilter;
+      if (activeFilterContainer) {
+        activeFilterContainer.classList.remove('hidden');
+        activeFilterContainer.classList.add('flex');
+        activeFilterContainer.style.display = 'flex';
+      }
+      if (activeFilterName) activeFilterName.textContent = selectedCharacterFilter;
     } else {
-      activeFilterContainer.add?.('hidden');
-      activeFilterContainer.classList.add('hidden');
-      activeFilterContainer.classList.remove('flex');
+      if (activeFilterContainer) {
+        activeFilterContainer.classList.add('hidden');
+        activeFilterContainer.classList.remove('flex');
+        activeFilterContainer.style.display = 'none';
+      }
     }
 
     document.querySelectorAll('.char-quick-tag').forEach(tag => {
@@ -218,6 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderCharacterQuickTags() {
+    if (!characterTagsBar) return;
     characterTagsBar.innerHTML = '';
     
     const charCountMap = {};
@@ -236,7 +223,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const fragment = document.createDocumentFragment();
 
-    // 「全選手表示」ボタン
     const allTag = document.createElement('button');
     allTag.textContent = '全選手表示';
     allTag.className = 'char-quick-tag cursor-pointer px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500 text-black border border-amber-300 font-tech shadow-md shadow-amber-500/20 transition-all';
@@ -253,11 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
       tag.innerHTML = `<span>${escapeHtml(char)}</span><span class="text-[10px] text-amber-400/80 font-bold">(${charCountMap[char]})</span>`;
       
       tag.addEventListener('click', () => {
-        if (selectedCharacterFilter === char) {
-          selectedCharacterFilter = null;
-        } else {
-          selectedCharacterFilter = char;
-        }
+        selectedCharacterFilter = (selectedCharacterFilter === char) ? null : char;
         applyFilterAndSearch();
       });
 
@@ -267,17 +249,21 @@ document.addEventListener('DOMContentLoaded', () => {
     characterTagsBar.appendChild(fragment);
   }
 
-  /**
-   * サッカートレーディングカード風コンボカード描画
-   */
   function renderComboCards(combos) {
+    if (!comboGrid) return;
     comboGrid.innerHTML = '';
 
     if (combos.length === 0) {
-      noResults.classList.remove('hidden');
+      if (noResults) {
+        noResults.classList.remove('hidden');
+        noResults.style.display = 'block';
+      }
       return;
     } else {
-      noResults.classList.add('hidden');
+      if (noResults) {
+        noResults.classList.add('hidden');
+        noResults.style.display = 'none';
+      }
     }
 
     const fragment = document.createDocumentFragment();
@@ -288,21 +274,17 @@ document.addEventListener('DOMContentLoaded', () => {
       card.style.animationDelay = `${delay}s`;
       card.className = 'card-animate soccer-card-hover spin-on-hover bg-pitch-card/95 backdrop-blur-md rounded-2xl border-2 border-pitch-border p-5 flex flex-col justify-between relative shadow-xl';
 
-      // 上部カード装飾 (サッカーピッチ/ゴールドライン)
       const topBar = document.createElement('div');
       topBar.className = 'absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 via-amber-400 to-teal-400 opacity-80 group-hover:opacity-100 transition-opacity';
       card.appendChild(topBar);
 
-      // 右上サッカーボールウォーターマーク
       const watermark = document.createElement('div');
       watermark.className = 'absolute top-3 right-3 text-emerald-500/10 text-4xl pointer-events-none';
       watermark.innerHTML = '<i class="fa-solid fa-futbol"></i>';
       card.appendChild(watermark);
 
-      // カード本体コンテンツ
       const contentWrapper = document.createElement('div');
 
-      // IDバッジ & コンボ名ヘッダー
       const headerDiv = document.createElement('div');
       headerDiv.className = 'mb-4 pr-6';
       
@@ -312,7 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
       headerDiv.innerHTML = idBadge + title;
       contentWrapper.appendChild(headerDiv);
 
-      // 構成キャラクタータグリスト (ユニフォームピイルバッジ)
       const charSection = document.createElement('div');
       charSection.className = 'mb-4';
       
@@ -350,7 +331,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       card.appendChild(contentWrapper);
 
-      // フッター（備考・条件 notes）
       const footerDiv = document.createElement('div');
       footerDiv.className = 'pt-3 border-t border-emerald-900/60 mt-auto text-xs';
 
@@ -377,24 +357,6 @@ document.addEventListener('DOMContentLoaded', () => {
     comboGrid.appendChild(fragment);
   }
 
-  // --- 6. 状態ヘルパー・UI切替 ---
-  function showLoading() {
-    loadingSpinner.classList.remove('hidden');
-    errorMessage.classList.add('hidden');
-    comboGrid.innerHTML = '';
-    noResults.classList.add('hidden');
-  }
-
-  function hideLoading() {
-    loadingSpinner.classList.add('hidden');
-  }
-
-  function showError(msg) {
-    hideLoading();
-    errorMessage.classList.remove('hidden');
-    errorText.textContent = msg;
-  }
-
   function escapeHtml(str) {
     if (typeof str !== 'string') return str;
     return str
@@ -405,49 +367,47 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/'/g, '&#039;');
   }
 
-  // --- 7. イベントリスナー設定 ---
-  searchInput.addEventListener('input', (e) => {
+  // イベントリスナー設定
+  searchInput?.addEventListener('input', (e) => {
     currentSearchQuery = e.target.value;
     applyFilterAndSearch();
   });
 
-  btnClearSearch.addEventListener('click', () => {
-    searchInput.value = '';
+  btnClearSearch?.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
     currentSearchQuery = '';
     applyFilterAndSearch();
-    searchInput.focus();
+    searchInput?.focus();
   });
 
-  btnRemoveCharFilter.addEventListener('click', () => {
+  btnRemoveCharFilter?.addEventListener('click', () => {
     selectedCharacterFilter = null;
     applyFilterAndSearch();
   });
 
-  btnResetAll.addEventListener('click', () => {
-    searchInput.value = '';
-    currentSearchQuery = '';
-    selectedCharacterFilter = null;
-    applyFilterAndSearch();
-  });
-
-  btnNoResultReset.addEventListener('click', () => {
-    searchInput.value = '';
+  btnResetAll?.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
     currentSearchQuery = '';
     selectedCharacterFilter = null;
     applyFilterAndSearch();
   });
 
-  jsonFileInput.addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      loadJsonFromFile(file);
-    }
+  btnNoResultReset?.addEventListener('click', () => {
+    if (searchInput) searchInput.value = '';
+    currentSearchQuery = '';
+    selectedCharacterFilter = null;
+    applyFilterAndSearch();
   });
 
-  btnReloadDefault.addEventListener('click', () => {
-    fetchComboData();
-  });
-
-  // 初期化
+  // 実行開始
   fetchComboData();
-});
+}
+
+// 超安心・即時実行ガード付きエントリーポイント
+(function() {
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(initApp, 1);
+  } else {
+    document.addEventListener('DOMContentLoaded', initApp);
+  }
+})();
