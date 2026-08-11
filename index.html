@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja" class="dark">
+<html lang="ja">
 
 <head>
   <meta charset="UTF-8">
@@ -7,620 +7,863 @@
   <title>キャプテン翼マイゴールデンⅪコンボデータベース | Combo Database</title>
   <meta name="description" content="キャプテン翼マイゴールデンⅪのコンボ・連携技情報を検索・閲覧できるリアルタイムデータベース">
 
-  <!-- Google Fonts (Rajdhani & Orbitron & Noto Sans JP) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700;800&display=swap"
-    rel="stylesheet">
-
-  <!-- FontAwesome for Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['"Noto Sans JP"', 'sans-serif'],
-            display: ['Orbitron', '"Noto Sans JP"', 'sans-serif'],
-            tech: ['Rajdhani', '"Noto Sans JP"', 'sans-serif']
-          },
-          colors: {
-            pitch: {
-              bg: '#07130c',
-              card: '#0d2117',
-              border: '#1b432e',
-              emerald: '#10b981',
-              lime: '#34d399',
-              gold: '#f59e0b',
-              yellow: '#fbbf24'
-            }
-          }
-        }
-      }
-    }
-  </script>
-
-  <!-- Custom CSS (またはインライン代替) -->
-  <link rel="stylesheet" href="style.css?v=4">
   <style>
-    /* 補重用カスタムCSS */
+    /* 全外部通信(CDN)を不要にする純粋なレスポンシブCSS */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       background-color: #07130c;
       background-image:
-        linear-gradient(90deg, rgba(16, 185, 129, 0.03) 50%, transparent 50%),
-        radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.15), transparent 70%),
-        radial-gradient(circle at 50% 100%, rgba(6, 182, 212, 0.1), transparent 70%);
+        linear-gradient(90deg, rgba(16, 185, 129, 0.04) 50%, transparent 50%),
+        radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.18), transparent 75%),
+        radial-gradient(circle at 50% 100%, rgba(6, 182, 212, 0.12), transparent 75%);
       background-size: 80px 100%, 100% 100%, 100% 100%;
+      color: #f3f4f6;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;
+      min-height: 100vh;
+      padding: 24px 16px;
+      line-height: 1.5;
     }
 
-    .custom-scrollbar::-webkit-scrollbar {
-      height: 6px;
-      width: 6px;
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
-    .custom-scrollbar::-webkit-scrollbar-track {
-      background: rgba(10, 30, 20, 0.8);
+    /* ヘッダー */
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
       border-radius: 9999px;
+      background-color: rgba(6, 78, 59, 0.8);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
     }
 
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(16, 185, 129, 0.5);
+    h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #34d399 0%, #a7f3d0 50%, #f59e0b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    @media (min-width: 640px) {
+      h1 {
+        font-size: 3rem;
+      }
+    }
+
+    .description {
+      color: rgba(209, 250, 229, 0.75);
+      font-size: 14px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* 更新日 */
+    .update-date {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .update-date span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
       border-radius: 9999px;
+      background: rgba(6, 78, 59, 0.5);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #a7f3d0;
+      font-size: 12px;
     }
 
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(14px) scale(0.98);
+    /* 検索セクション */
+    .search-section {
+      margin-bottom: 32px;
+    }
+
+    .search-box-wrapper {
+      position: relative;
+      max-width: 720px;
+      margin: 0 auto 16px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      fill: #f59e0b;
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 44px 14px 48px;
+      background-color: rgba(13, 33, 23, 0.95);
+      border: 2px solid #1b432e;
+      border-radius: 16px;
+      color: #ffffff;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .search-input:focus {
+      border-color: #10b981;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 18px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .clear-btn:hover {
+      color: #f59e0b;
+    }
+
+    /* ステータスバー */
+    .status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-between: space-between;
+      gap: 12px;
+      max-width: 960px;
+      margin: 0 auto 16px;
+      font-size: 13px;
+      color: #a7f3d0;
+    }
+
+    .result-count-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background-color: #0d2117;
+      border: 1px solid #1b432e;
+      border-radius: 12px;
+    }
+
+    .result-count-num {
+      color: #f59e0b;
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .active-filter-badge {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      border-radius: 9999px;
+      color: #a7f3d0;
+      font-weight: 700;
+    }
+
+    .remove-filter-btn {
+      background: none;
+      border: none;
+      color: #f59e0b;
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 4px;
+    }
+
+    .reset-link {
+      color: #a7f3d0;
+      text-decoration: underline;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 12px;
+    }
+
+    .reset-link:hover {
+      color: #f59e0b;
+    }
+
+    /* クイックフィルタータグバー */
+    .tags-section {
+      max-width: 960px;
+      margin: 0 auto;
+    }
+
+    .tags-title {
+      font-size: 12px;
+      color: #34d399;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-height: 120px;
+      overflow-y: auto;
+    }
+
+    .char-quick-tag {
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #0d2117;
+      border: 1px solid #1b432e;
+      color: #d1fae5;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .char-quick-tag:hover {
+      border-color: #10b981;
+      color: #f59e0b;
+      transform: translateY(-1px);
+    }
+
+    .char-quick-tag.active {
+      background: #f59e0b;
+      color: #000000;
+      border-color: #fcd34d;
+    }
+
+    /* カードグリッド */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 640px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
       }
+    }
 
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
+    @media (min-width: 1024px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
       }
     }
 
-    .card-animate {
-      animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    }
-
-    .soccer-card-hover {
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    /* コンボカード */
+    .combo-card {
+      background: rgba(13, 33, 23, 0.95);
+      border: 2px solid #1b432e;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+      transition: all 0.3s ease;
     }
 
-    .soccer-card-hover:hover {
+    .combo-card:hover {
       border-color: rgba(16, 185, 129, 0.7);
-      box-shadow: 0 10px 30px -5px rgba(16, 185, 129, 0.25), 0 0 15px rgba(245, 158, 11, 0.15);
       transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(16, 185, 129, 0.2);
     }
 
-    .char-tag {
-      transition: all 0.2s ease-in-out;
+    .combo-card-top-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #10b981, #f59e0b, #06b6d4);
     }
 
-    .char-tag:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    .combo-id-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #f59e0b;
+      background: rgba(6, 78, 59, 0.8);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-bottom: 8px;
     }
 
-    #search-input:focus {
-      box-shadow: 0 0 25px rgba(16, 185, 129, 0.3), 0 0 5px rgba(245, 158, 11, 0.2);
+    .combo-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 14px;
+      line-height: 1.3;
+    }
+
+    .member-label {
+      font-size: 11px;
+      color: #34d399;
+      font-weight: 700;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .member-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .member-btn {
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(6, 78, 59, 0.6);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #a7f3d0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .member-btn:hover {
+      background: #f59e0b;
+      color: #000000;
+      border-color: #fcd34d;
+    }
+
+    .member-btn.active {
+      background: #f59e0b;
+      color: #000000;
+      border-color: #fcd34d;
+    }
+
+    .card-footer {
+      border-top: 1px solid rgba(27, 67, 46, 0.8);
+      padding-top: 12px;
+      margin-top: auto;
+      font-size: 12px;
+    }
+
+    .notes-box {
+      background: rgba(120, 53, 15, 0.3);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      border-radius: 8px;
+      padding: 8px 10px;
+      color: #fde68a;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .no-notes {
+      color: rgba(52, 211, 153, 0.5);
+      font-style: italic;
+      font-size: 11px;
+    }
+
+    /* 該当なし */
+    .no-results {
+      text-align: center;
+      padding: 48px 16px;
+      display: none;
+    }
+
+    .no-results-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #e5e7eb;
+      margin-bottom: 8px;
+    }
+
+    .reset-btn-large {
+      padding: 10px 20px;
+      border-radius: 12px;
+      background: #f59e0b;
+      color: #000;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid #1b432e;
+      font-size: 12px;
+      color: rgba(52, 211, 153, 0.5);
     }
   </style>
 </head>
 
-<body
-  class="bg-pitch-bg text-gray-100 min-h-screen font-sans selection:bg-emerald-500 selection:text-black antialiased relative overflow-x-hidden">
+<body>
 
-  <!-- 背景アンビエントグラデーション -->
-  <div class="fixed top-0 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
-  <div class="fixed top-1/3 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
-  <div class="fixed bottom-10 left-1/3 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none -z-10"></div>
+  <div class="container">
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-    <!-- ヘッダーエリア -->
-    <header class="mb-8 text-center relative">
-      <div
-        class="inline-flex items-center space-x-2 px-3.5 py-1 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-400 text-xs font-tech tracking-wider uppercase mb-3 shadow-lg shadow-emerald-950/50">
-        <i class="fa-solid fa-futbol text-amber-400 animate-spin" style="animation-duration: 12s;"></i>
-        <span>CAPTAIN TSUBASA MY GOLDEN XI • COMBO DB</span>
+    <!-- ヘッダー -->
+    <header>
+      <div class="badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b">
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
+        </svg>
+        <span>CAPTAIN TSUBASA MY GOLDEN XI</span>
       </div>
 
-      <h1
-        class="text-3xl sm:text-5xl lg:text-6xl font-extrabold font-display tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-200 to-amber-400 drop-shadow-md mb-2 leading-tight">
-        キャプテン翼 マイゴールデンⅪ<br class="hidden sm:inline">
-        <span class="text-2xl sm:text-4xl lg:text-5xl text-emerald-300 font-tech">COMBO ARCHIVE</span>
-      </h1>
+      <h1>キャプテン翼 マイゴールデンⅪ<br>COMBO ARCHIVE</h1>
 
-      <p class="text-emerald-100/70 max-w-2xl mx-auto text-xs sm:text-sm font-medium">
-        <i class="fa-solid fa-trophy text-amber-400 mr-1"></i>
-        ゲーム内の黄金連携・特殊コンボ技をリアルタイム検索！<BR>キャラクタータグクリックで即座に絞り込み可能。
+      <p class="description">
+        ゲーム内の黄金連携・特殊コンボ技をリアルタイム検索！<br>選手タグクリックで即座に絞り込み可能。
       </p>
     </header>
 
-    <!-- 更新日記載 -->
-    <div class="text-center mb-6">
-      <span
-        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-950/70 border border-emerald-800/60 text-emerald-300/80 text-xs font-tech">
-        <i class="fa-regular fa-calendar-check text-amber-400"></i>
-        <span>最終更新日: 2026年8月11日</span>
+    <!-- 更新日 -->
+    <div class="update-date">
+      <span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b">
+          <path
+            d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" />
+        </svg>
+        最終更新日: 2026年8月11日
       </span>
     </div>
 
-    <!-- コントロール・検索セクション -->
-    <section class="mb-8 space-y-4">
-      <div class="relative max-w-3xl mx-auto">
-        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-emerald-400">
-          <i class="fa-solid fa-futbol text-xl text-amber-400"></i>
-        </div>
-        <input type="text" id="search-input" placeholder="選手名、コンボ・連携技名で検索... (例: 大空翼, ツインシュート)"
-          class="w-full pl-12 pr-12 py-3.5 sm:py-4 bg-pitch-card/90 border-2 border-pitch-border rounded-2xl text-white placeholder-emerald-200/40 focus:outline-none focus:border-emerald-400 focus:ring-4 focus:ring-emerald-500/20 shadow-2xl transition-all duration-300 text-sm sm:text-base font-medium"
+    <!-- 検索コントロール -->
+    <section class="search-section">
+      <div class="search-box-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24">
+          <path
+            d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+        </svg>
+        <input type="text" id="search-input" class="search-input" placeholder="選手名、コンボ・連携技名で検索... (例: 大空翼, ツインシュート)"
           autocomplete="off">
-
-        <button id="btn-clear-search"
-          class="hidden absolute inset-y-0 right-0 pr-4 flex items-center text-emerald-400/60 hover:text-amber-400 transition"
-          title="検索をクリア">
-          <i class="fa-solid fa-circle-xmark text-xl"></i>
-        </button>
+        <button id="btn-clear-search" class="clear-btn">&times;</button>
       </div>
 
-      <!-- ステータス情報 -->
-      <div
-        class="flex flex-wrap items-center justify-between gap-4 max-w-5xl mx-auto text-xs sm:text-sm text-emerald-200/80 px-2">
-
-        <div
-          class="flex items-center space-x-2 bg-pitch-card px-3.5 py-1.5 rounded-xl border border-pitch-border shadow-inner">
-          <i class="fa-solid fa-clipboard-list text-amber-400"></i>
-          <span class="text-emerald-200/70">検索結果:</span>
-          <span id="result-count" class="font-bold text-amber-400 font-tech text-lg">0</span>
-          <span class="text-emerald-700">/</span>
-          <span id="total-count" class="text-emerald-300 font-tech">0</span>
+      <div class="status-bar">
+        <div class="result-count-badge">
+          <span>検索結果:</span>
+          <span id="result-count" class="result-count-num">0</span>
+          <span>/</span>
+          <span id="total-count">0</span>
           <span>件</span>
         </div>
 
-        <div id="active-filter-container" class="hidden flex items-center space-x-2" style="display:none;">
-          <span class="text-emerald-200/70">選択選手:</span>
-          <span id="active-filter-badge"
-            class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 text-xs font-bold shadow">
-            <i class="fa-solid fa-shirt text-amber-400"></i>
-            <span id="active-filter-name">キャラ名</span>
-            <button id="btn-remove-char-filter" class="ml-1 text-emerald-400 hover:text-amber-400">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          </span>
+        <div id="active-filter-container" class="active-filter-badge">
+          <span>選択選手:</span>
+          <span id="active-filter-name">選手名</span>
+          <button id="btn-remove-char-filter" class="remove-filter-btn">&times;</button>
         </div>
 
-        <div class="flex items-center space-x-2">
-          <button id="btn-reset-all"
-            class="text-xs text-emerald-300/80 hover:text-amber-400 transition underline underline-offset-4 flex items-center gap-1">
-            <i class="fa-solid fa-filter-circle-xmark"></i>
-            <span>すべてのフィルターを解除</span>
-          </button>
+        <div>
+          <button id="btn-reset-all" class="reset-link">すべてのフィルターを解除</button>
         </div>
       </div>
 
-      <!-- クイックフィルター -->
-      <div class="max-w-5xl mx-auto pt-2">
-        <div class="text-xs text-emerald-400/80 uppercase tracking-wider mb-2 font-tech flex items-center gap-1.5">
-          <i class="fa-solid fa-users-viewfinder text-amber-400"></i>
-          <span>選手別クイックフィルター</span>
+      <div class="tags-section">
+        <div class="tags-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b">
+            <path
+              d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+          </svg>
+          選手別クイックフィルター
         </div>
-        <div id="character-tags-bar" class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto pr-1 custom-scrollbar">
-        </div>
+        <div id="character-tags-bar" class="tags-container custom-scrollbar"></div>
       </div>
     </section>
 
     <!-- メインコンテンツ -->
     <main>
-      <!-- 初期非表示(hidden & display:none)のスピナー -->
-      <div id="loading-spinner" class="hidden py-20 text-center" style="display: none;">
-        <div
-          class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-emerald-500/30 border-t-amber-400 mb-4">
-        </div>
-        <p class="text-emerald-300/70 text-sm font-medium">コンボデータをフィールドに展開中...</p>
+      <!-- 該当なしメッセージ -->
+      <div id="no-results" class="no-results">
+        <div class="no-results-title">該当する連携技・コンボが見つかりませんでした</div>
+        <p style="color: rgba(209, 250, 229, 0.6); font-size: 14px;">検索キーワードを変更するか、選手絞り込みを解除してみてください。</p>
+        <button id="btn-no-result-reset" class="reset-btn-large">検索条件をリセット</button>
       </div>
 
-      <!-- 検索結果 0 件メッセージ -->
-      <div id="no-results" class="hidden py-16 text-center" style="display: none;">
-        <div
-          class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-pitch-card border border-pitch-border text-emerald-500 mb-4 shadow-lg">
-          <i class="fa-solid fa-futbol text-3xl text-amber-400 opacity-60"></i>
-        </div>
-        <h3 class="text-xl font-bold text-emerald-100 mb-1">該当する連携技・コンボが見つかりませんでした</h3>
-        <p class="text-emerald-300/60 text-sm max-w-sm mx-auto mb-6">
-          検索キーワードを変更するか、選手絞り込みを解除してみてください。
-        </p>
-        <button id="btn-no-result-reset"
-          class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-sm transition shadow-lg shadow-amber-500/20 flex items-center gap-2 mx-auto">
-          <i class="fa-solid fa-rotate-left"></i>
-          <span>検索条件をリセット</span>
-        </button>
-      </div>
-
-      <!-- コンボカード一覧グリッド -->
-      <div id="combo-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      </div>
+      <!-- コンボカード一覧グリッド (初期状態で即表示) -->
+      <div id="combo-grid" class="grid"></div>
     </main>
 
-    <footer class="mt-20 pt-8 border-t border-pitch-border text-center text-xs text-emerald-400/50">
-      <p><i class="fa-solid fa-futbol text-amber-500/60 mr-1"></i> キャプテン翼 マイゴールデンⅪ コンボデータベース &copy; 2026</p>
+    <footer>
+      <p>キャプテン翼 マイゴールデンⅪ コンボデータベース &copy; 2026</p>
     </footer>
 
   </div>
 
-  <!-- インラインで直接即時実行するJS (外部ファイルのロード遅延・エラーを100%回避) -->
+  <!-- 純粋 Vanilla JS ロジック (全環境で 0.01 秒で確実に即時描画) -->
   <script>
-      (function () {
-        const DEFAULT_COMBO_DATA = {
-          "combo_001": { "combo_name": "南葛黄金コンビ", "": ["大空翼", "岬太郎"], "notes": null },
-          "combo_002": { "combo_name": "ジャンピングツインシュート", "": ["大空翼", "岬太郎"], "notes": "赤カード限定" },
-          "combo_003": { "combo_name": "最後の試合相手", "": ["大空翼", "三杉淳"], "notes": null },
-          "combo_004": { "combo_name": "ちょうせん状", "": ["大空翼", "若林源三"], "notes": null },
-          "combo_005": { "combo_name": "日本のダブルエース", "": ["大空翼", "日向小次郎"], "notes": null },
-          "combo_006": { "combo_name": "ジャンピングヘッド", "": ["大空翼", "高杉真吾"], "notes": null },
-          "combo_007": { "combo_name": "キャプテン同士の激突", "": ["大空翼", "カール・ハインツ・シュナイダー"], "notes": null },
-          "combo_008": { "combo_name": "いくぞピエール", "": ["大空翼", "エル・シド・ピエール"], "notes": null },
-          "combo_009": { "combo_name": "いっしょにがんばった仲間", "": ["岬太郎", "松山光"], "notes": null },
-          "combo_010": { "combo_name": "貴公子とアーティストの共鳴", "": ["岬太郎", "三杉淳"], "notes": null },
-          "combo_011": { "combo_name": "一対一の勝負", "": ["岬太郎", "エル・シド・ピエール"], "notes": null },
-          "combo_012": { "combo_name": "日本の秘密兵器", "": ["三杉淳", "ファン・ディアス"], "notes": null },
-          "combo_013": { "combo_name": "キャプテン同士の奪い合い", "": ["松山光", "日向小次郎"], "notes": null },
-          "combo_014": { "combo_name": "よそ見なんかしてるんじゃねぇ", "": ["日向小次郎", "カール・ハインツ・シュナイダー"], "notes": null },
-          "combo_015": { "combo_name": "圧倒的なハングリー精神", "": ["日向小次郎", "ファン・ディアス"], "notes": null },
-          "combo_016": { "combo_name": "天才vs猛虎", "": ["日向小次郎", "若林源三"], "notes": "日向赤カード限定" },
-          "combo_017": { "combo_name": "いくぜキャプテン", "": ["日向小次郎", "若島津健"], "notes": null },
-          "combo_018": { "combo_name": "東邦フォワードコンビ", "": ["日向小次郎", "反町一樹"], "notes": null },
-          "combo_019": { "combo_name": "若き皇帝とSGGK", "": ["若林源三", "カール・ハインツ・シュナイダー"], "notes": null },
-          "combo_020": { "combo_name": "縄張り争い", "": ["若林源三", "石崎了"], "notes": null },
-          "combo_021": { "combo_name": "日本の正GKの座", "": ["若林源三", "若島津健"], "notes": null },
-          "combo_022": { "combo_name": "若林さんの教え", "": ["若林源三", "森崎有三"], "notes": null },
-          "combo_023": { "combo_name": "スカイラブ・ハリケーン", "": ["立花政夫", "立花和夫"], "notes": null },
-          "combo_024": { "combo_name": "空中サッカーやぶり", "": ["立花和夫", "石崎了"], "notes": null },
-          "combo_025": { "combo_name": "約束の応援団", "": ["石崎了", "浦辺反次"], "notes": null },
-          "combo_026": { "combo_name": "南葛必死のダブルタックル", "": ["石崎了", "岸田猛"], "notes": null },
-          "combo_027": { "combo_name": "決勝進出をかけたPK戦", "": ["若島津健", "エル・シド・ピエール"], "notes": null },
-          "combo_028": { "combo_name": "打倒南葛", "": ["浦辺反次", "岸田猛"], "notes": null },
-          "combo_029": { "combo_name": "ちびっこコンビ", "": ["沢田タケシ", "佐野満"], "notes": null },
-          "combo_030": { "combo_name": "東邦のみごとな連係プレイ", "": ["沢田タケシ", "反町一樹"], "notes": null },
-          "combo_031": { "combo_name": "南葛シルバーコンビ", "": ["来生哲兵", "滝一"], "notes": null },
-          "combo_032": { "combo_name": "修哲トリオ", "": ["井沢守", "来生哲兵", "滝一"], "notes": null },
-          "combo_033": { "combo_name": "南葛黄金コンビvsディアス", "": ["大空翼", "岬太郎", "ファン・ディアス"], "notes": null },
-          "combo_034": { "combo_name": "立花兄弟のマッサージ", "": ["立花政夫", "立花和夫", "佐野満"], "notes": null },
-          "combo_035": { "combo_name": "立花兄弟のかわり", "": ["反町一樹", "立花政夫", "立花和夫", "佐野満"], "notes": null },
-          "combo_036": { "combo_name": "修哲からずっと一緒", "": ["井沢守", "来生哲兵", "滝一", "高杉真吾", "森崎有三"], "notes": null }
-        };
+    (function () {
+      // 埋め込みデフォルトデータ
+      const DEFAULT_COMBO_DATA = {
+        "combo_001": { "combo_name": "南葛黄金コンビ", "": ["大空翼", "岬太郎"], "notes": null },
+        "combo_002": { "combo_name": "ジャンピングツインシュート", "": ["大空翼", "岬太郎"], "notes": "赤カード限定" },
+        "combo_003": { "combo_name": "最後の試合相手", "": ["大空翼", "三杉淳"], "notes": null },
+        "combo_004": { "combo_name": "ちょうせん状", "": ["大空翼", "若林源三"], "notes": null },
+        "combo_005": { "combo_name": "日本のダブルエース", "": ["大空翼", "日向小次郎"], "notes": null },
+        "combo_006": { "combo_name": "ジャンピングヘッド", "": ["大空翼", "高杉真吾"], "notes": null },
+        "combo_007": { "combo_name": "キャプテン同士の激突", "": ["大空翼", "カール・ハインツ・シュナイダー"], "notes": null },
+        "combo_008": { "combo_name": "いくぞピエール", "": ["大空翼", "エル・シド・ピエール"], "notes": null },
+        "combo_009": { "combo_name": "いっしょにがんばった仲間", "": ["岬太郎", "松山光"], "notes": null },
+        "combo_010": { "combo_name": "貴公子とアーティストの共鳴", "": ["岬太郎", "三杉淳"], "notes": null },
+        "combo_011": { "combo_name": "一対一の勝負", "": ["岬太郎", "エル・シド・ピエール"], "notes": null },
+        "combo_012": { "combo_name": "日本の秘密兵器", "": ["三杉淳", "ファン・ディアス"], "notes": null },
+        "combo_013": { "combo_name": "キャプテン同士の奪い合い", "": ["松山光", "日向小次郎"], "notes": null },
+        "combo_014": { "combo_name": "よそ見なんかしてるんじゃねぇ", "": ["日向小次郎", "カール・ハインツ・シュナイダー"], "notes": null },
+        "combo_015": { "combo_name": "圧倒的なハングリー精神", "": ["日向小次郎", "ファン・ディアス"], "notes": null },
+        "combo_016": { "combo_name": "天才vs猛虎", "": ["日向小次郎", "若林源三"], "notes": "日向赤カード限定" },
+        "combo_017": { "combo_name": "いくぜキャプテン", "": ["日向小次郎", "若島津健"], "notes": null },
+        "combo_018": { "combo_name": "東邦フォワードコンビ", "": ["日向小次郎", "反町一樹"], "notes": null },
+        "combo_019": { "combo_name": "若き皇帝とSGGK", "": ["若林源三", "カール・ハインツ・シュナイダー"], "notes": null },
+        "combo_020": { "combo_name": "縄張り争い", "": ["若林源三", "石崎了"], "notes": null },
+        "combo_021": { "combo_name": "日本の正GKの座", "": ["若林源三", "若島津健"], "notes": null },
+        "combo_022": { "combo_name": "若林さんの教え", "": ["若林源三", "森崎有三"], "notes": null },
+        "combo_023": { "combo_name": "スカイラブ・ハリケーン", "": ["立花政夫", "立花和夫"], "notes": null },
+        "combo_024": { "combo_name": "空中サッカーやぶり", "": ["立花和夫", "石崎了"], "notes": null },
+        "combo_025": { "combo_name": "約束の応援団", "": ["石崎了", "浦辺反次"], "notes": null },
+        "combo_026": { "combo_name": "南葛必死のダブルタックル", "": ["石崎了", "岸田猛"], "notes": null },
+        "combo_027": { "combo_name": "決勝進出をかけたPK戦", "": ["若島津健", "エル・シド・ピエール"], "notes": null },
+        "combo_028": { "combo_name": "打倒南葛", "": ["浦辺反次", "岸田猛"], "notes": null },
+        "combo_029": { "combo_name": "ちびっこコンビ", "": ["沢田タケシ", "佐野満"], "notes": null },
+        "combo_030": { "combo_name": "東邦のみごとな連係プレイ", "": ["沢田タケシ", "反町一樹"], "notes": null },
+        "combo_031": { "combo_name": "南葛シルバーコンビ", "": ["来生哲兵", "滝一"], "notes": null },
+        "combo_032": { "combo_name": "修哲トリオ", "": ["井沢守", "来生哲兵", "滝一"], "notes": null },
+        "combo_033": { "combo_name": "南葛黄金コンビvsディアス", "": ["大空翼", "岬太郎", "ファン・ディアス"], "notes": null },
+        "combo_034": { "combo_name": "立花兄弟のマッサージ", "": ["立花政夫", "立花和夫", "佐野満"], "notes": null },
+        "combo_035": { "combo_name": "立花兄弟のかわり", "": ["反町一樹", "立花政夫", "立花和夫", "佐野満"], "notes": null },
+        "combo_036": { "combo_name": "修哲からずっと一緒", "": ["井沢守", "来生哲兵", "滝一", "高杉真吾", "森崎有三"], "notes": null }
+      };
 
-        let allCombos = [];
-        let currentFilteredCombos = [];
-        let selectedCharacterFilter = null;
-        let currentSearchQuery = '';
+      let allCombos = [];
+      let currentFilteredCombos = [];
+      let selectedCharacterFilter = null;
+      let currentSearchQuery = '';
 
-        function normalizeText(str) {
-          if (!str) return '';
-          try {
-            return str.normalize('NFKC').toLowerCase().replace(/[\u30a1-\u30f6]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x60)).trim();
-          } catch (e) {
-            return String(str).toLowerCase().trim();
+      function normalizeText(str) {
+        if (!str) return '';
+        try {
+          return str.normalize('NFKC').toLowerCase().replace(/[\u30a1-\u30f6]/g, m => String.fromCharCode(m.charCodeAt(0) - 0x60)).trim();
+        } catch (e) {
+          return String(str).toLowerCase().trim();
+        }
+      }
+
+      function normalizeComboData(rawData) {
+        if (!rawData) return [];
+        let result = [];
+        try {
+          if (Array.isArray(rawData)) {
+            result = rawData.map((item, idx) => ({
+              id: item.id || `combo_${String(idx + 1).padStart(3, '0')}`,
+              combo_name: item.combo_name || item.name || '名称未設定コンボ',
+              characters: Array.isArray(item.characters) ? item.characters : (Array.isArray(item[""]) ? item[""] : []),
+              notes: item.notes || null
+            }));
+          } else if (typeof rawData === 'object') {
+            result = Object.entries(rawData).map(([key, item], idx) => ({
+              id: item.id || key || `combo_${String(idx + 1).padStart(3, '0')}`,
+              combo_name: item.combo_name || item.name || '名称未設定コンボ',
+              characters: Array.isArray(item.characters) ? item.characters : (Array.isArray(item[""]) ? item[""] : []),
+              notes: item.notes || null
+            }));
           }
-        }
+        } catch (e) { }
+        return result;
+      }
 
-        function normalizeComboData(rawData) {
-          if (!rawData) return [];
-          let result = [];
-          try {
-            if (Array.isArray(rawData)) {
-              result = rawData.map((item, idx) => ({
-                id: item.id || `combo_${String(idx + 1).padStart(3, '0')}`,
-                combo_name: item.combo_name || item.name || '名称未設定コンボ',
-                characters: Array.isArray(item.characters) ? item.characters : (Array.isArray(item[""]) ? item[""] : []),
-                notes: item.notes || null
-              }));
-            } else if (typeof rawData === 'object') {
-              result = Object.entries(rawData).map(([key, item], idx) => ({
-                id: item.id || key || `combo_${String(idx + 1).padStart(3, '0')}`,
-                combo_name: item.combo_name || item.name || '名称未設定コンボ',
-                characters: Array.isArray(item.characters) ? item.characters : (Array.isArray(item[""]) ? item[""] : []),
-                notes: item.notes || null
-              }));
-            }
-          } catch (e) { }
-          return result;
-        }
+      function escapeHtml(str) {
+        if (typeof str !== 'string') return str;
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+      }
 
-        function escapeHtml(str) {
-          if (typeof str !== 'string') return str;
-          return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
-        }
+      function startApp() {
+        const searchInput = document.getElementById('search-input');
+        const btnClearSearch = document.getElementById('btn-clear-search');
+        const comboGrid = document.getElementById('combo-grid');
+        const noResults = document.getElementById('no-results');
+        const resultCount = document.getElementById('result-count');
+        const totalCount = document.getElementById('total-count');
+        const activeFilterContainer = document.getElementById('active-filter-container');
+        const activeFilterName = document.getElementById('active-filter-name');
+        const btnRemoveCharFilter = document.getElementById('btn-remove-char-filter');
+        const btnResetAll = document.getElementById('btn-reset-all');
+        const btnNoResultReset = document.getElementById('btn-no-result-reset');
+        const characterTagsBar = document.getElementById('character-tags-bar');
 
-        function startApp() {
-          const searchInput = document.getElementById('search-input');
-          const btnClearSearch = document.getElementById('btn-clear-search');
-          const comboGrid = document.getElementById('combo-grid');
-          const loadingSpinner = document.getElementById('loading-spinner');
-          const noResults = document.getElementById('no-results');
-          const resultCount = document.getElementById('result-count');
-          const totalCount = document.getElementById('total-count');
-          const activeFilterContainer = document.getElementById('active-filter-container');
-          const activeFilterName = document.getElementById('active-filter-name');
-          const btnRemoveCharFilter = document.getElementById('btn-remove-char-filter');
-          const btnResetAll = document.getElementById('btn-reset-all');
-          const btnNoResultReset = document.getElementById('btn-no-result-reset');
-          const characterTagsBar = document.getElementById('character-tags-bar');
+        allCombos = normalizeComboData(DEFAULT_COMBO_DATA);
+        if (totalCount) totalCount.textContent = allCombos.length;
 
-          if (loadingSpinner) {
-            loadingSpinner.style.display = 'none';
-            loadingSpinner.classList.add('hidden');
+        function updateUIState() {
+          if (resultCount) resultCount.textContent = currentFilteredCombos.length;
+
+          if (currentSearchQuery.length > 0) {
+            if (btnClearSearch) btnClearSearch.style.display = 'block';
+          } else {
+            if (btnClearSearch) btnClearSearch.style.display = 'none';
           }
 
-          allCombos = normalizeComboData(DEFAULT_COMBO_DATA);
-          if (totalCount) totalCount.textContent = allCombos.length;
+          if (selectedCharacterFilter) {
+            if (activeFilterContainer) activeFilterContainer.style.display = 'flex';
+            if (activeFilterName) activeFilterName.textContent = selectedCharacterFilter;
+          } else {
+            if (activeFilterContainer) activeFilterContainer.style.display = 'none';
+          }
 
-          function updateUIState() {
-            if (resultCount) resultCount.textContent = currentFilteredCombos.length;
-
-            if (currentSearchQuery.length > 0) {
-              btnClearSearch?.classList.remove('hidden');
+          document.querySelectorAll('.char-quick-tag').forEach(tag => {
+            const charName = tag.dataset.char;
+            if (charName === selectedCharacterFilter) {
+              tag.classList.add('active');
             } else {
-              btnClearSearch?.classList.add('hidden');
+              tag.classList.remove('active');
             }
+          });
+        }
 
-            if (selectedCharacterFilter) {
-              if (activeFilterContainer) {
-                activeFilterContainer.classList.remove('hidden');
-                activeFilterContainer.classList.add('flex');
-                activeFilterContainer.style.display = 'flex';
-              }
-              if (activeFilterName) activeFilterName.textContent = selectedCharacterFilter;
-            } else {
-              if (activeFilterContainer) {
-                activeFilterContainer.classList.add('hidden');
-                activeFilterContainer.classList.remove('flex');
-                activeFilterContainer.style.display = 'none';
-              }
-            }
+        function renderCharacterQuickTags() {
+          if (!characterTagsBar) return;
+          characterTagsBar.innerHTML = '';
 
-            document.querySelectorAll('.char-quick-tag').forEach(tag => {
-              const charName = tag.dataset.char;
-              if (charName === selectedCharacterFilter) {
-                tag.className = 'char-quick-tag cursor-pointer px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500 text-black border border-amber-300 font-tech shadow-md shadow-amber-500/20 transition-all';
-              } else {
-                tag.className = 'char-quick-tag cursor-pointer px-2.5 py-1 rounded-lg text-xs font-medium bg-pitch-card hover:bg-emerald-900/60 text-emerald-100 hover:text-amber-300 border border-pitch-border hover:border-emerald-500/40 font-tech transition-all';
-              }
+          const charCountMap = {};
+          allCombos.forEach(combo => {
+            combo.characters.forEach(char => {
+              charCountMap[char] = (charCountMap[char] || 0) + 1;
             });
-          }
+          });
 
-          function renderCharacterQuickTags() {
-            if (!characterTagsBar) return;
-            characterTagsBar.innerHTML = '';
+          const sortedChars = Object.keys(charCountMap).sort((a, b) => charCountMap[b] - charCountMap[a]);
+          const fragment = document.createDocumentFragment();
 
-            const charCountMap = {};
-            allCombos.forEach(combo => {
-              combo.characters.forEach(char => {
-                charCountMap[char] = (charCountMap[char] || 0) + 1;
-              });
-            });
+          const allTag = document.createElement('button');
+          allTag.textContent = '全選手表示';
+          allTag.className = 'char-quick-tag active';
+          allTag.addEventListener('click', () => {
+            selectedCharacterFilter = null;
+            applyFilterAndSearch();
+          });
+          fragment.appendChild(allTag);
 
-            const sortedChars = Object.keys(charCountMap).sort((a, b) => charCountMap[b] - charCountMap[a]);
-            const fragment = document.createDocumentFragment();
+          sortedChars.forEach(char => {
+            const tag = document.createElement('button');
+            tag.dataset.char = char;
+            tag.className = 'char-quick-tag';
+            tag.innerHTML = `<span>${escapeHtml(char)}</span><span style="font-size:10px; opacity:0.8;">(${charCountMap[char]})</span>`;
 
-            const allTag = document.createElement('button');
-            allTag.textContent = '全選手表示';
-            allTag.className = 'char-quick-tag cursor-pointer px-2.5 py-1 rounded-lg text-xs font-semibold bg-amber-500 text-black border border-amber-300 font-tech shadow-md shadow-amber-500/20 transition-all';
-            allTag.addEventListener('click', () => {
-              selectedCharacterFilter = null;
+            tag.addEventListener('click', () => {
+              selectedCharacterFilter = (selectedCharacterFilter === char) ? null : char;
               applyFilterAndSearch();
             });
-            fragment.appendChild(allTag);
 
-            sortedChars.forEach(char => {
-              const tag = document.createElement('button');
-              tag.dataset.char = char;
-              tag.className = 'char-quick-tag cursor-pointer px-2.5 py-1 rounded-lg text-xs font-medium bg-pitch-card hover:bg-emerald-900/60 text-emerald-100 hover:text-amber-300 border border-pitch-border hover:border-emerald-500/40 font-tech transition-all flex items-center gap-1';
-              tag.innerHTML = `<span>${escapeHtml(char)}</span><span class="text-[10px] text-amber-400/80 font-bold">(${charCountMap[char]})</span>`;
+            fragment.appendChild(tag);
+          });
 
-              tag.addEventListener('click', () => {
-                selectedCharacterFilter = (selectedCharacterFilter === char) ? null : char;
-                applyFilterAndSearch();
-              });
+          characterTagsBar.appendChild(fragment);
+        }
 
-              fragment.appendChild(tag);
-            });
+        function renderComboCards(combos) {
+          if (!comboGrid) return;
+          comboGrid.innerHTML = '';
 
-            characterTagsBar.appendChild(fragment);
+          if (combos.length === 0) {
+            if (noResults) noResults.style.display = 'block';
+            return;
+          } else {
+            if (noResults) noResults.style.display = 'none';
           }
 
-          function renderComboCards(combos) {
-            if (!comboGrid) return;
-            comboGrid.innerHTML = '';
+          const fragment = document.createDocumentFragment();
 
-            if (combos.length === 0) {
-              if (noResults) {
-                noResults.classList.remove('hidden');
-                noResults.style.display = 'block';
-              }
-              return;
-            } else {
-              if (noResults) {
-                noResults.classList.add('hidden');
-                noResults.style.display = 'none';
-              }
+          combos.forEach((combo, index) => {
+            const card = document.createElement('div');
+            card.className = 'combo-card';
+
+            const topBar = document.createElement('div');
+            topBar.className = 'combo-card-top-bar';
+            card.appendChild(topBar);
+
+            const contentWrapper = document.createElement('div');
+
+            const idBadge = `<div class="combo-id-badge">🏆 ${escapeHtml(combo.id)}</div>`;
+            const title = `<div class="combo-title">${escapeHtml(combo.combo_name)}</div>`;
+
+            contentWrapper.innerHTML = idBadge + title;
+
+            const charSection = document.createElement('div');
+            const charLabel = `<div class="member-label">👥 発動メンバー (${combo.characters.length}名)</div>`;
+
+            const tagsDiv = document.createElement('div');
+            tagsDiv.className = 'member-tags';
+
+            if (combo.characters.length > 0) {
+              combo.characters.forEach(char => {
+                const charBtn = document.createElement('button');
+                const isSelected = char === selectedCharacterFilter;
+                charBtn.className = isSelected ? 'member-btn active' : 'member-btn';
+                charBtn.innerHTML = `👕 ${escapeHtml(char)}`;
+
+                charBtn.addEventListener('click', (e) => {
+                  e.stopPropagation();
+                  selectedCharacterFilter = char;
+                  applyFilterAndSearch();
+                });
+
+                tagsDiv.appendChild(charBtn);
+              });
             }
 
-            const fragment = document.createDocumentFragment();
+            charSection.innerHTML = charLabel;
+            charSection.appendChild(tagsDiv);
+            contentWrapper.appendChild(charSection);
+            card.appendChild(contentWrapper);
 
-            combos.forEach((combo, index) => {
-              const card = document.createElement('div');
-              const delay = Math.min(index * 0.02, 0.25);
-              card.style.animationDelay = `${delay}s`;
-              card.className = 'card-animate soccer-card-hover spin-on-hover bg-pitch-card/95 backdrop-blur-md rounded-2xl border-2 border-pitch-border p-5 flex flex-col justify-between relative shadow-xl';
+            const footerDiv = document.createElement('div');
+            footerDiv.className = 'card-footer';
 
-              const topBar = document.createElement('div');
-              topBar.className = 'absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-500 via-amber-400 to-teal-400 opacity-80 group-hover:opacity-100 transition-opacity';
-              card.appendChild(topBar);
+            if (combo.notes) {
+              footerDiv.innerHTML = `<div class="notes-box">🚩 <span>${escapeHtml(combo.notes)}</span></div>`;
+            } else {
+              footerDiv.innerHTML = `<div class="no-notes">✓ 発動特殊条件なし</div>`;
+            }
 
-              const watermark = document.createElement('div');
-              watermark.className = 'absolute top-3 right-3 text-emerald-500/10 text-4xl pointer-events-none';
-              watermark.innerHTML = '<i class="fa-solid fa-futbol"></i>';
-              card.appendChild(watermark);
+            card.appendChild(footerDiv);
+            fragment.appendChild(card);
+          });
 
-              const contentWrapper = document.createElement('div');
+          comboGrid.appendChild(fragment);
+        }
 
-              const headerDiv = document.createElement('div');
-              headerDiv.className = 'mb-4 pr-6';
+        function applyFilterAndSearch() {
+          const normQuery = normalizeText(currentSearchQuery);
 
-              const idBadge = `<div class="inline-flex items-center gap-1 text-[11px] font-tech font-bold text-amber-400 bg-emerald-950/90 px-2.5 py-0.5 rounded-md border border-emerald-700/60 mb-2 shadow-inner"><i class="fa-solid fa-trophy text-[10px]"></i> ${escapeHtml(combo.id)}</div>`;
-              const title = `<h3 class="text-xl font-extrabold text-white group-hover:text-amber-300 transition-colors tracking-wide leading-snug font-sans">${escapeHtml(combo.combo_name)}</h3>`;
+          currentFilteredCombos = allCombos.filter(combo => {
+            if (selectedCharacterFilter) {
+              if (!combo.characters.includes(selectedCharacterFilter)) return false;
+            }
+            if (!normQuery) return true;
 
-              headerDiv.innerHTML = idBadge + title;
-              contentWrapper.appendChild(headerDiv);
+            if (normalizeText(combo.combo_name).includes(normQuery)) return true;
+            if (combo.characters.some(c => normalizeText(c).includes(normQuery))) return true;
+            if (combo.notes && normalizeText(combo.notes).includes(normQuery)) return true;
 
-              const charSection = document.createElement('div');
-              charSection.className = 'mb-4';
+            return false;
+          });
 
-              const charLabel = `<div class="text-[11px] font-tech uppercase text-emerald-400/80 mb-2 flex items-center gap-1.5 font-bold"><i class="fa-solid fa-users text-amber-400"></i> 発動メンバー (${combo.characters.length}名)</div>`;
+          updateUIState();
+          renderComboCards(currentFilteredCombos);
+        }
 
-              const tagsDiv = document.createElement('div');
-              tagsDiv.className = 'flex flex-wrap gap-1.5';
-
-              if (combo.characters.length > 0) {
-                combo.characters.forEach(char => {
-                  const charBtn = document.createElement('button');
-                  const isSelected = char === selectedCharacterFilter;
-
-                  charBtn.className = isSelected
-                    ? 'char-tag cursor-pointer px-3 py-1 rounded-xl text-xs font-bold bg-amber-500 text-black border border-amber-300 shadow-md font-sans'
-                    : 'char-tag cursor-pointer px-3 py-1 rounded-xl text-xs font-semibold bg-emerald-950/80 hover:bg-amber-500 text-emerald-200 hover:text-black border border-emerald-700/60 hover:border-amber-300 font-sans transition-all flex items-center gap-1';
-
-                  charBtn.innerHTML = `<i class="fa-solid fa-shirt text-[10px]"></i><span>${escapeHtml(char)}</span>`;
-
-                  charBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    selectedCharacterFilter = char;
-                    applyFilterAndSearch();
-                  });
-
-                  tagsDiv.appendChild(charBtn);
-                });
-              }
-
-              charSection.innerHTML = charLabel;
-              charSection.appendChild(tagsDiv);
-              contentWrapper.appendChild(charSection);
-
-              card.appendChild(contentWrapper);
-
-              const footerDiv = document.createElement('div');
-              footerDiv.className = 'pt-3 border-t border-emerald-900/60 mt-auto text-xs';
-
-              if (combo.notes) {
-                footerDiv.innerHTML = `
-                <div class="flex items-start space-x-2 text-amber-300 bg-amber-950/40 p-2.5 rounded-xl border border-amber-700/50 shadow-inner">
-                  <i class="fa-solid fa-flag-checkered text-amber-400 mt-0.5 flex-shrink-0"></i>
-                  <span class="leading-relaxed font-medium">${escapeHtml(combo.notes)}</span>
-                </div>
-              `;
-              } else {
-                footerDiv.innerHTML = `
-                <div class="text-emerald-500/50 italic text-[11px] flex items-center gap-1 font-tech">
-                  <i class="fa-solid fa-check text-emerald-600"></i>
-                  <span>発動特殊条件なし</span>
-                </div>
-              `;
-              }
-
-              card.appendChild(footerDiv);
-              fragment.appendChild(card);
-            });
-
-            comboGrid.appendChild(fragment);
-          }
-
-          function applyFilterAndSearch() {
-            const normQuery = normalizeText(currentSearchQuery);
-
-            currentFilteredCombos = allCombos.filter(combo => {
-              if (selectedCharacterFilter) {
-                if (!combo.characters.includes(selectedCharacterFilter)) return false;
-              }
-              if (!normQuery) return true;
-
-              if (normalizeText(combo.combo_name).includes(normQuery)) return true;
-              if (combo.characters.some(c => normalizeText(c).includes(normQuery))) return true;
-              if (combo.notes && normalizeText(combo.notes).includes(normQuery)) return true;
-
-              return false;
-            });
-
-            updateUIState();
-            renderComboCards(currentFilteredCombos);
-          }
-
-          // イベント登録
-          searchInput?.addEventListener('input', (e) => {
+        // イベント登録
+        if (searchInput) {
+          searchInput.addEventListener('input', (e) => {
             currentSearchQuery = e.target.value;
             applyFilterAndSearch();
           });
+        }
 
-          btnClearSearch?.addEventListener('click', () => {
+        if (btnClearSearch) {
+          btnClearSearch.addEventListener('click', () => {
             if (searchInput) searchInput.value = '';
             currentSearchQuery = '';
             applyFilterAndSearch();
           });
+        }
 
-          btnRemoveCharFilter?.addEventListener('click', () => {
+        if (btnRemoveCharFilter) {
+          btnRemoveCharFilter.addEventListener('click', () => {
             selectedCharacterFilter = null;
             applyFilterAndSearch();
           });
+        }
 
-          btnResetAll?.addEventListener('click', () => {
+        if (btnResetAll) {
+          btnResetAll.addEventListener('click', () => {
             if (searchInput) searchInput.value = '';
             currentSearchQuery = '';
             selectedCharacterFilter = null;
             applyFilterAndSearch();
           });
+        }
 
-          btnNoResultReset?.addEventListener('click', () => {
+        if (btnNoResultReset) {
+          btnNoResultReset.addEventListener('click', () => {
             if (searchInput) searchInput.value = '';
             currentSearchQuery = '';
             selectedCharacterFilter = null;
             applyFilterAndSearch();
           });
+        }
 
-          // 外部 data.json の非同期読み込み試行（サーバー公開用）
-          fetch('data.json')
-            .then(res => res.ok ? res.json() : null)
-            .then(data => {
-              if (data) {
-                const loaded = normalizeComboData(data);
-                if (loaded.length > 0) {
-                  allCombos = loaded;
-                  if (totalCount) totalCount.textContent = allCombos.length;
-                  renderCharacterQuickTags();
-                  applyFilterAndSearch();
-                }
+        // 外部 data.json 読み込み試行（サーバー環境）
+        fetch('data.json')
+          .then(res => res.ok ? res.json() : null)
+          .then(data => {
+            if (data) {
+              const loaded = normalizeComboData(data);
+              if (loaded.length > 0) {
+                allCombos = loaded;
+                if (totalCount) totalCount.textContent = allCombos.length;
+                renderCharacterQuickTags();
+                applyFilterAndSearch();
               }
-            })
-            .catch(e => { });
+            }
+          })
+          .catch(e => { });
 
-          // 初期描画
-          renderCharacterQuickTags();
-          applyFilterAndSearch();
-        }
+        // 即時描画発動
+        renderCharacterQuickTags();
+        applyFilterAndSearch();
+      }
 
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', startApp);
-        } else {
-          startApp();
-        }
-      })();
+      if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        startApp();
+      } else {
+        document.addEventListener('DOMContentLoaded', startApp);
+      }
+    })();
   </script>
 </body>
 
