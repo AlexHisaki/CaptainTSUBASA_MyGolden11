@@ -841,22 +841,6 @@
           });
         }
 
-        // 外部 data.json 読み込み試行（サーバー環境）
-        fetch('data.json')
-          .then(res => res.ok ? res.json() : null)
-          .then(data => {
-            if (data) {
-              const loaded = normalizeComboData(data);
-              if (loaded.length > 0) {
-                allCombos = loaded;
-                if (totalCount) totalCount.textContent = allCombos.length;
-                renderCharacterQuickTags();
-                applyFilterAndSearch();
-              }
-            }
-          })
-          .catch(e => { });
-
         // 即時描画発動
         renderCharacterQuickTags();
         applyFilterAndSearch();
