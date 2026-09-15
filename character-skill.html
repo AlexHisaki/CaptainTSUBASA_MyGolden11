@@ -1,0 +1,1187 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>キャプテン翼マイゴールデンⅪ 選手別所持スキルデータベース | Character Skill Database</title>
+  <meta name="description" content="キャプテン翼マイゴールデンⅪの各選手（★3, ★2, ★1）が習得するスキル・解放Lv・適性ポジション情報を検索・閲覧できるリアルタイムデータベース">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #07130c;
+      background-image:
+        linear-gradient(90deg, rgba(16, 185, 129, 0.04) 50%, transparent 50%),
+        radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.18), transparent 75%),
+        radial-gradient(circle at 50% 100%, rgba(6, 182, 212, 0.12), transparent 75%);
+      background-size: 80px 100%, 100% 100%, 100% 100%;
+      color: #f3f4f6;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;
+      min-height: 100vh;
+      padding: 24px 16px;
+      line-height: 1.5;
+    }
+
+    /* スクロールバーのカスタマイズ */
+    .custom-scrollbar::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(10, 30, 20, 0.8);
+      border-radius: 9999px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(16, 185, 129, 0.5);
+      border-radius: 9999px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(16, 185, 129, 0.9);
+    }
+
+    /* アニメーション */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px) scale(0.98);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .card-animate {
+      animation: fadeInUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* ホバーエフェクト */
+    .soccer-card-hover {
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .soccer-card-hover::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(90deg,
+          transparent,
+          rgba(255, 255, 255, 0.08),
+          transparent);
+      transform: skewX(-25deg);
+      transition: 0.75s;
+      pointer-events: none;
+    }
+
+    .soccer-card-hover:hover::before {
+      left: 150%;
+    }
+
+    .soccer-card-hover:hover {
+      border-color: rgba(16, 185, 129, 0.7);
+      box-shadow:
+        0 10px 30px -5px rgba(16, 185, 129, 0.25),
+        0 0 15px rgba(245, 158, 11, 0.15);
+      transform: translateY(-4px);
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* サイト共通ナビゲーションタブ */
+    .site-nav {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .site-nav-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      color: #a7f3d0;
+      background-color: rgba(13, 33, 23, 0.8);
+      border: 1px solid #1b432e;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .site-nav-item:hover {
+      color: #ffffff;
+      border-color: rgba(16, 185, 129, 0.6);
+      background-color: rgba(16, 185, 129, 0.15);
+      transform: translateY(-2px);
+    }
+
+    .site-nav-item.active {
+      color: #07130c;
+      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+      border-color: #34d399;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+    }
+
+    /* ヘッダー */
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
+      border-radius: 9999px;
+      background-color: rgba(6, 78, 59, 0.8);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #34d399 0%, #a7f3d0 50%, #f59e0b 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    @media (min-width: 640px) {
+      h1 {
+        font-size: 3rem;
+      }
+    }
+
+    .description {
+      color: rgba(209, 250, 229, 0.75);
+      font-size: 14px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* 更新日 */
+    .update-date {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .update-date span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      background: rgba(6, 78, 59, 0.5);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #a7f3d0;
+      font-size: 12px;
+    }
+
+    /* 検索セクション */
+    .search-section {
+      margin-bottom: 32px;
+    }
+
+    .search-box-wrapper {
+      position: relative;
+      max-width: 720px;
+      margin: 0 auto 16px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      fill: #f59e0b;
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 44px 14px 48px;
+      background-color: rgba(13, 33, 23, 0.95);
+      border: 2px solid #1b432e;
+      border-radius: 16px;
+      color: #ffffff;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .search-input:focus {
+      border-color: #10b981;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 18px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .clear-btn:hover {
+      color: #f59e0b;
+    }
+
+    /* フィルターボタン群 */
+    .filter-group-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 14px;
+    }
+
+    .filter-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #34d399;
+      letter-spacing: 0.05em;
+      margin-right: 6px;
+    }
+
+    .filter-buttons {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #0d2117;
+      border: 1px solid #1b432e;
+      color: #a7f3d0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-btn:hover {
+      border-color: #10b981;
+      color: #ffffff;
+    }
+
+    .filter-btn.active {
+      background: rgba(16, 185, 129, 0.25);
+      border-color: #34d399;
+      color: #f59e0b;
+      font-weight: 700;
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.3);
+    }
+
+    /* キャラクタークイックフィルタータグ */
+    .tags-section {
+      max-width: 960px;
+      margin: 16px auto 0;
+    }
+
+    .tags-title {
+      font-size: 12px;
+      color: #34d399;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .char-quick-tag {
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #0d2117;
+      border: 1px solid #1b432e;
+      color: #a7f3d0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .char-quick-tag:hover {
+      border-color: #10b981;
+      color: #ffffff;
+    }
+
+    .char-quick-tag.active {
+      background: rgba(16, 185, 129, 0.3);
+      border-color: #34d399;
+      color: #f59e0b;
+      font-weight: 700;
+    }
+
+    /* ステータスバー */
+    .status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      max-width: 960px;
+      margin: 18px auto 16px;
+      font-size: 13px;
+      color: #a7f3d0;
+    }
+
+    .result-count-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background-color: #0d2117;
+      border: 1px solid #1b432e;
+      border-radius: 12px;
+    }
+
+    .result-count-num {
+      color: #f59e0b;
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .active-filter-badge {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      border-radius: 9999px;
+      color: #a7f3d0;
+      font-weight: 700;
+    }
+
+    .remove-filter-btn {
+      background: none;
+      border: none;
+      color: #f59e0b;
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 4px;
+    }
+
+    .reset-link {
+      color: #a7f3d0;
+      text-decoration: underline;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 12px;
+    }
+
+    .reset-link:hover {
+      color: #f59e0b;
+    }
+
+    /* キャラクターカードグリッド */
+    .char-skills-grid {
+      display: grid;
+      grid-template-columns: repeat(1, 1fr);
+      gap: 20px;
+    }
+
+    @media (min-width: 640px) {
+      .char-skills-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .char-skills-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    /* キャラクターカードスタイル */
+    .char-card {
+      background: linear-gradient(145deg, rgba(13, 33, 23, 0.95), rgba(7, 19, 12, 0.98));
+      border: 1px solid #1b432e;
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      gap: 14px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35);
+    }
+
+    .char-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      border-bottom: 1px dashed rgba(27, 67, 46, 0.8);
+      padding-bottom: 12px;
+    }
+
+    .char-title-area {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .char-no-tag {
+      font-size: 11px;
+      color: #a7f3d0;
+      opacity: 0.7;
+      font-weight: 700;
+    }
+
+    .char-sub-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #f59e0b;
+      letter-spacing: 0.02em;
+    }
+
+    .char-name {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #ffffff;
+      background: linear-gradient(135deg, #ffffff 0%, #34d399 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+    }
+
+    .char-badges {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .star-badge {
+      padding: 3px 10px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+
+    .star-badge.star3 {
+      background: rgba(245, 158, 11, 0.25);
+      border: 1px solid rgba(245, 158, 11, 0.7);
+      color: #fbbf24;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+    }
+
+    .star-badge.star2 {
+      background: rgba(168, 85, 247, 0.2);
+      border: 1px solid rgba(168, 85, 247, 0.5);
+      color: #c084fc;
+    }
+
+    .star-badge.star1 {
+      background: rgba(52, 211, 153, 0.15);
+      border: 1px solid rgba(52, 211, 153, 0.4);
+      color: #34d399;
+    }
+
+    .aptitude-badge {
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(6, 182, 212, 0.2);
+      border: 1px solid rgba(6, 182, 212, 0.5);
+      color: #38bdf8;
+    }
+
+    /* 所持スキルステップリスト */
+    .skills-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .skill-step-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(13, 33, 23, 0.6);
+      border: 1px solid rgba(27, 67, 46, 0.6);
+      border-radius: 10px;
+      padding: 8px 12px;
+      transition: border-color 0.2s ease;
+    }
+
+    .skill-step-item:hover {
+      border-color: rgba(16, 185, 129, 0.5);
+    }
+
+    .level-tag {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 6px;
+      min-width: 52px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .level-tag.lv1 {
+      background: rgba(52, 211, 153, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+    }
+
+    .level-tag.lv55 {
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .level-tag.lv65 {
+      background: rgba(168, 85, 247, 0.15);
+      color: #c084fc;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+
+    .level-tag.lv80 {
+      background: rgba(251, 146, 60, 0.15);
+      color: #fb923c;
+      border: 1px solid rgba(251, 146, 60, 0.3);
+    }
+
+    .level-tag.lv100 {
+      background: rgba(245, 158, 11, 0.25);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, 0.6);
+    }
+
+    .skill-name-text {
+      font-size: 13px;
+      font-weight: 700;
+      color: #f3f4f6;
+    }
+
+    /* 該当なし表示 */
+    .no-results {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+      background: rgba(13, 33, 23, 0.6);
+      border: 1px dashed #1b432e;
+      border-radius: 20px;
+      margin: 40px auto;
+      max-width: 600px;
+    }
+
+    .no-results-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f59e0b;
+      margin-bottom: 8px;
+    }
+
+    .reset-btn-large {
+      margin-top: 16px;
+      padding: 10px 24px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border: none;
+      border-radius: 12px;
+      color: #ffffff;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+
+    .reset-btn-large:hover {
+      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(27, 67, 46, 0.5);
+      color: rgba(167, 243, 208, 0.5);
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- サイト共通タブナビゲーション -->
+    <nav class="site-nav">
+      <a href="index.html" class="site-nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-.46.05-.91.14-1.35L8.5 15v1c0 1.1.9 2 2 2h3v1.93c-1.39.7-2.96 1.07-4.5 1.07zm6.9-3.09c-.27-.54-.82-.91-1.45-.91h-1v-3c0-.55-.45-1-1-1H9v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 1.83-.62 3.52-1.9 4.91z" />
+        </svg>
+        コンボ・連携技DB
+      </a>
+      <a href="skill.html" class="site-nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M7 2v11h3v9l7-12h-4l4-8z" />
+        </svg>
+        スキル一覧DB
+      </a>
+      <a href="character-skill.html" class="site-nav-item active">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+        </svg>
+        選手別スキルDB
+      </a>
+    </nav>
+
+    <!-- ヘッダー -->
+    <header>
+      <div class="badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+        </svg>
+        CHARACTER SKILL ARCHIVE
+      </div>
+      <h1>選手別所持スキルデータベース</h1>
+      <p class="description">
+        <span style="display: inline-block;">キャプテン翼 マイゴールデンⅪ 各選手のレアリティ別（★3, ★2, ★1）</span><span
+          style="display: inline-block;">習得スキル・解放Lv・適性ポジションをリアルタイム検索！</span><br>
+        <span style="display: inline-block;">選手名や所持スキル名で、</span><span
+          style="display: inline-block;">あなたのチームに必要な選手を素早く検索・比較できます。</span>
+      </p>
+    </header>
+
+    <!-- 更新日 -->
+    <div class="update-date">
+      <span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b">
+          <path
+            d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" />
+        </svg>
+        データ更新日: 2026年9月16日
+      </span>
+    </div>
+
+    <!-- 検索＆フィルターコントロール -->
+    <section class="search-section">
+      <div class="search-box-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24">
+          <path
+            d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+        </svg>
+        <input type="text" id="search-input" class="search-input"
+          placeholder="選手名、異名、所持スキル名、適性で検索... (例: 大空翼, ストライカー, OFM)" autocomplete="off">
+        <button id="btn-clear-search" class="clear-btn">&times;</button>
+      </div>
+
+      <!-- フィルターボタン群 -->
+      <div class="filter-group-container">
+        <!-- レアリティ フィルター -->
+        <div style="display: flex; align-items: center;">
+          <span class="filter-label">レアリティ:</span>
+          <div class="filter-buttons" id="star-filter-group">
+            <button class="filter-btn active" data-filter-type="star" data-value="all">すべて</button>
+            <button class="filter-btn" data-filter-type="star" data-value="3">★3 (SSR)</button>
+            <button class="filter-btn" data-filter-type="star" data-value="2">★2 (SR)</button>
+            <button class="filter-btn" data-filter-type="star" data-value="1">★1 (R)</button>
+          </div>
+        </div>
+
+        <!-- 適性ポジション フィルター -->
+        <div style="display: flex; align-items: center;">
+          <span class="filter-label">適性位置:</span>
+          <div class="filter-buttons" id="apt-filter-group">
+            <button class="filter-btn active" data-filter-type="apt" data-value="all">すべて</button>
+            <button class="filter-btn" data-filter-type="apt" data-value="GK">GK</button>
+            <button class="filter-btn" data-filter-type="apt" data-value="FW">FW (CF/LWG/RWG)</button>
+            <button class="filter-btn" data-filter-type="apt" data-value="MF">MF (OFM/OMF/DMF/LMF)</button>
+            <button class="filter-btn" data-filter-type="apt" data-value="DF">DF (CB/LSB/RSB)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- クイック選手タグ -->
+      <div class="tags-section">
+        <div class="tags-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b">
+            <path
+              d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+          </svg>
+          主要選手クイック絞り込み
+        </div>
+        <div id="char-tags-container" class="tags-container">
+          <button class="char-quick-tag" data-char="大空 翼">大空 翼</button>
+          <button class="char-quick-tag" data-char="日向 小次郎">日向 小次郎</button>
+          <button class="char-quick-tag" data-char="若林 源三">若林 源三</button>
+          <button class="char-quick-tag" data-char="岬 太郎">岬 太郎</button>
+          <button class="char-quick-tag" data-char="松山 光">松山 光</button>
+          <button class="char-quick-tag" data-char="三杉 淳">三杉 淳</button>
+          <button class="char-quick-tag" data-char="若島津 健">若島津 健</button>
+          <button class="char-quick-tag" data-char="立花">立花兄弟</button>
+          <button class="char-quick-tag" data-char="シュナイダー">シュナイダー</button>
+          <button class="char-quick-tag" data-char="ピエール">ピエール</button>
+          <button class="char-quick-tag" data-char="ディアス">ディアス</button>
+        </div>
+      </div>
+
+      <!-- ステータスバー -->
+      <div class="status-bar">
+        <div class="result-count-badge">
+          <span>表示選手数:</span>
+          <span id="result-count" class="result-count-num">0</span>
+          <span>/</span>
+          <span id="total-count">0</span>
+          <span>件</span>
+        </div>
+
+        <div id="active-filter-container" class="active-filter-badge">
+          <span>絞り込みフィルター適用中</span>
+          <button id="btn-remove-char-filter" class="remove-filter-btn">&times;</button>
+        </div>
+
+        <div>
+          <button id="btn-reset-all" class="reset-link">すべての検索・フィルターを解除</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- メインコンテンツ -->
+    <main>
+      <!-- 該当なしメッセージ -->
+      <div id="no-results" class="no-results">
+        <div class="no-results-title">該当する選手が見つかりませんでした</div>
+        <p style="color: rgba(209, 250, 229, 0.6); font-size: 14px;">検索キーワードを変更するか、フィルター条件をリセットしてみてください。</p>
+        <button id="btn-no-result-reset" class="reset-btn-large">検索・フィルターをリセット</button>
+      </div>
+
+      <!-- キャラクターカード一覧グリッド -->
+      <div id="char-skills-grid" class="char-skills-grid"></div>
+    </main>
+
+    <footer>
+      <p>キャプテン翼 マイゴールデンⅪ 選手別所持スキルデータベース &copy; 2026</p>
+    </footer>
+
+  </div>
+
+  <!-- JavaScript アプリケーションロジック -->
+  <script>
+    (function () {
+      // character-skill.xlsx から抽出・加工したマスターデータ
+      const CHARACTER_SKILL_MASTER_DATA = [
+        { "no": "3-00", "star": 3, "title": "未来の日本代表エースミライニホンダイヒョウ", "name": "大空 翼オオゾラツバサ", "skills": { "lv1": "チームプレー", "lv55": "熱血ネッケツ", "lv65": "", "lv80": "", "lv100": "戦術眼センジュツガン" }, "aptitude": "" },
+        { "no": "3-01", "star": 3, "title": "日本代表Jr.ユースキャプテン", "name": "大空 翼", "skills": { "lv1": "キープ力リョク", "lv55": "切れ者キモノ", "lv65": "疾風シップウ", "lv80": "士気高揚シキコウヨウ", "lv100": "精密セイミツ" }, "aptitude": "OFM+1" },
+        { "no": "3-02", "star": 3, "title": "奇跡の体現者キセキタイゲンシャ", "name": "大空 翼", "skills": { "lv1": "我慢ガマン", "lv55": "固い絆カタキズナ", "lv65": "ストライカー", "lv80": "的確テキカク", "lv100": "攻守自在コウシュジザイ" }, "aptitude": "OFM+1" },
+        { "no": "3-03", "star": 3, "title": "フィールドのアーティスト", "name": "岬 太郎", "skills": { "lv1": "キープ力リョク", "lv55": "パス名人メイジン", "lv65": "固い絆カタキズナ", "lv80": "我慢ガマン", "lv100": "ゲームメーカー" }, "aptitude": "OFM+1" },
+        { "no": "3-04", "star": 3, "title": "ガッツマン", "name": "石崎 了", "skills": { "lv1": "固い絆カタキズナ", "lv55": "チームプレー", "lv65": "的確テキカク", "lv80": "危機察知キキサッチ", "lv100": "限界突破ゲンカイトッパ" }, "aptitude": "RSB+1" },
+        { "no": "3-05", "star": 3, "title": "S.G.G.K", "name": "若林 源三", "skills": { "lv1": "我慢ガマン", "lv55": "強靭キョウジン", "lv65": "戦術眼センジュツガン", "lv80": "危機察知キキサッチ", "lv100": "絶対守護ゼッタイシュゴ" }, "aptitude": "GK+1" },
+        { "no": "3-06", "star": 3, "title": "鉄壁の守護神テッペキシュゴシン", "name": "若林 源三", "skills": { "lv1": "我慢ガマン", "lv55": "無尽蔵ムジンゾウ", "lv65": "切れ者キモノ", "lv80": "キープ力リョク", "lv100": "豪胆ゴウタン" }, "aptitude": "GK+1" },
+        { "no": "3-07", "star": 3, "title": "エース・ストライカー", "name": "日向 小次郎", "skills": { "lv1": "的確テキカク", "lv55": "ストライカー", "lv65": "強靭キョウジン", "lv80": "エースの自覚ジカク", "lv100": "勝利への執着心ショウリシュウチャクシン" }, "aptitude": "CB+1" },
+        { "no": "3-08", "star": 3, "title": "世界を貫く弾道セカイツラヌダンドウ", "name": "日向 小次郎", "skills": { "lv1": "キープ力リョク", "lv55": "エースの自覚ジカク", "lv65": "クロス名人メイジン", "lv80": "信頼シンライ", "lv100": "攻撃の起点コウゲキキテン" }, "aptitude": "CF+1" },
+        { "no": "3-09", "star": 3, "title": "若堂流空手", "name": "若島津 健", "skills": { "lv1": "危機察知キキサッチ", "lv55": "信頼シンライ", "lv65": "チームプレー", "lv80": "熱血ネッケツ", "lv100": "全力ゼンリョク" }, "aptitude": "GK+1" },
+        { "no": "3-10", "star": 3, "title": "ミラクルサッカー", "name": "立花 政夫", "skills": { "lv1": "エースの自覚ジカク", "lv55": "疾風シップウ", "lv65": "パス名人メイジン", "lv80": "巧手コウシュ", "lv100": "独壇場のドリブルドクダンジョウ" }, "aptitude": "LWG+1" },
+        { "no": "3-11", "star": 3, "title": "アクロバットサッカー", "name": "立花 和夫", "skills": { "lv1": "巧手コウシュ", "lv55": "パス名人メイジン", "lv65": "疾風シップウ", "lv80": "士気高揚シキコウヨウ", "lv100": "絶好調ゼッコウチョウ" }, "aptitude": "DMF+1" },
+        { "no": "3-12", "star": 3, "title": "雪国の戦士", "name": "松山 光", "skills": { "lv1": "危機察知キキサッチ", "lv55": "ストライカー", "lv65": "的確テキカク", "lv80": "戦術眼センジュツガン", "lv100": "鼓舞コブ" }, "aptitude": "CB+1" },
+        { "no": "3-13", "star": 3, "title": "フィールドの貴公子", "name": "三杉 淳", "skills": { "lv1": "冷静レイセイ", "lv55": "危機察知キキサッチ", "lv65": "士気高揚シキコウヨウ", "lv80": "切れ者キモノ", "lv100": "無双ムソウ" }, "aptitude": "DMF+1" },
+        { "no": "3-14", "star": 3, "title": "サッカーの申し子", "name": "ファン・ディアス", "skills": { "lv1": "パス名人メイジン", "lv55": "キープ力リョク", "lv65": "戦術眼センジュツガン", "lv80": "的確テキカク", "lv100": "ドリブルキング" }, "aptitude": "DMF+1" },
+        { "no": "3-15", "star": 3, "title": "ドイツの若き皇帝", "name": "カール・ハインツ・シュナイダー", "skills": { "lv1": "威圧イアツ", "lv55": "エースの自覚ジカク", "lv65": "ストライカー", "lv80": "シュート名人メイジン", "lv100": "勝利への執着心ショウリシュウチャクシン" }, "aptitude": "CF+1" },
+        { "no": "3-16", "star": 3, "title": "フィールドの薔薇", "name": "エル・シド・ピエール", "skills": { "lv1": "切れ者キモノ", "lv55": "パス名人メイジン", "lv65": "巧手コウシュ", "lv80": "クロス名人メイジン", "lv100": "フィールドの演出家エンシュツカ" }, "aptitude": "LMF+1" },
+        { "no": "3-17", "star": 3, "title": "カミソリファイター", "name": "早田 誠", "skills": { "lv1": "無尽蔵ムジンゾウ", "lv55": "疾風シップウ", "lv65": "キープ力リョク", "lv80": "危機察知キキサッチ", "lv100": "全力ゼンリョク" }, "aptitude": "LSB+1" },
+        { "no": "3-18", "star": 3, "title": "砂漠の王子", "name": "マーク・オワイラン", "skills": { "lv1": "戦術眼センジュツガン", "lv55": "冷静レイセイ", "lv65": "士気高揚シキコウヨウ", "lv80": "疾風シップウ", "lv100": "奪取ダッシュ" }, "aptitude": "LSB+1" },
+        { "no": "3-19", "star": 3, "title": "ハヤブサ", "name": "新田 瞬", "skills": { "lv1": "ストライカー", "lv55": "キープ力リョク", "lv65": "エースの自覚ジカク", "lv80": "チームプレー", "lv100": "全力ゼンリョク" }, "aptitude": "RWG+1" },
+        { "no": "2-01", "star": 2, "title": "南葛のキャプテン", "name": "大空 翼", "skills": { "lv1": "キープ力リョク", "lv55": "", "lv65": "", "lv80": "", "lv100": "切れ者キモノ" }, "aptitude": "" },
+        { "no": "2-02", "star": 2, "title": "心優しきテクニシャン", "name": "岬 太郎", "skills": { "lv1": "キープ力リョク", "lv55": "", "lv65": "", "lv80": "", "lv100": "的確テキカク" }, "aptitude": "" },
+        { "no": "2-03", "star": 2, "title": "ムードメーカー", "name": "石崎 了", "skills": { "lv1": "我慢ガマン", "lv55": "", "lv65": "", "lv80": "", "lv100": "無尽蔵ムジンゾウ" }, "aptitude": "" },
+        { "no": "2-04", "star": 2, "title": "天才キーパー", "name": "若林 源三", "skills": { "lv1": "チームプレー", "lv55": "", "lv65": "", "lv80": "", "lv100": "熱血ネッケツ" }, "aptitude": "" },
+        { "no": "2-05", "star": 2, "title": "ヘディングの名手", "name": "井沢 守", "skills": { "lv1": "戦術眼センジュツガン", "lv55": "", "lv65": "", "lv80": "", "lv100": "的確テキカク" }, "aptitude": "" },
+        { "no": "2-06", "star": 2, "title": "点取り屋", "name": "来生 哲兵", "skills": { "lv1": "熱血ネッケツ", "lv55": "", "lv65": "", "lv80": "", "lv100": "無尽蔵ムジンゾウ" }, "aptitude": "" },
+        { "no": "2-07", "star": 2, "title": "ラインぎわのドリブラー", "name": "滝 一", "skills": { "lv1": "士気高揚シキコウヨウ", "lv55": "", "lv65": "", "lv80": "", "lv100": "信頼シンライ" }, "aptitude": "" },
+        { "no": "2-08", "star": 2, "title": "スイーパー", "name": "高杉 真吾", "skills": { "lv1": "無尽蔵ムジンゾウ", "lv55": "", "lv65": "", "lv80": "", "lv100": "チームプレー" }, "aptitude": "" },
+        { "no": "2-09", "star": 2, "title": "スーパーがんばりGK", "name": "森崎 有三", "skills": { "lv1": "熱血ネッケツ", "lv55": "", "lv65": "", "lv80": "", "lv100": "無尽蔵ムジンゾウ" }, "aptitude": "" },
+        { "no": "2-10", "star": 2, "title": "不屈の魂", "name": "浦辺 反次", "skills": { "lv1": "信頼シンライ", "lv55": "", "lv65": "", "lv80": "", "lv100": "クロス名人メイジン" }, "aptitude": "" },
+        { "no": "2-11", "star": 2, "title": "執念のディフェンダー", "name": "岸田 猛", "skills": { "lv1": "疾風シップウ", "lv55": "", "lv65": "", "lv80": "", "lv100": "士気高揚シキコウヨウ" }, "aptitude": "" },
+        { "no": "2-12", "star": 2, "title": "猛虎", "name": "日向 小次郎", "skills": { "lv1": "士気高揚シキコウヨウ", "lv55": "", "lv65": "", "lv80": "", "lv100": "信頼シンライ" }, "aptitude": "" },
+        { "no": "2-13", "star": 2, "title": "中学No.1キーパー", "name": "若島津 健", "skills": { "lv1": "士気高揚シキコウヨウ", "lv55": "", "lv65": "", "lv80": "", "lv100": "信頼シンライ" }, "aptitude": "" },
+        { "no": "2-14", "star": 2, "title": "小さなテクニシャン", "name": "沢田 タケシ", "skills": { "lv1": "的確テキカク", "lv55": "", "lv65": "", "lv80": "", "lv100": "冷静レイセイ" }, "aptitude": "" },
+        { "no": "2-15", "star": 2, "title": "仕事人", "name": "反町 一樹", "skills": { "lv1": "疾風シップウ", "lv55": "", "lv65": "", "lv80": "", "lv100": "クロス名人メイジン" }, "aptitude": "" },
+        { "no": "2-16", "star": 2, "title": "空中サッカー", "name": "立花 政夫", "skills": { "lv1": "パス名人メイジン", "lv55": "", "lv65": "", "lv80": "", "lv100": "キープ力リョク" }, "aptitude": "" },
+        { "no": "2-17", "star": 2, "title": "空中サッカー", "name": "立花 和夫", "skills": { "lv1": "疾風シップウ", "lv55": "", "lv65": "", "lv80": "", "lv100": "クロス名人メイジン" }, "aptitude": "" },
+        { "no": "2-18", "star": 2, "title": "ふらののキャプテン", "name": "松山 光", "skills": { "lv1": "強靭キョウジン", "lv55": "", "lv65": "", "lv80": "", "lv100": "我慢ガマン" }, "aptitude": "" },
+        { "no": "2-19", "star": 2, "title": "ガラスのエース", "name": "三杉 淳", "skills": { "lv1": "切れ者キモノ", "lv55": "", "lv65": "", "lv80": "", "lv100": "パス名人メイジン" }, "aptitude": "" },
+        { "no": "2-20", "star": 2, "title": "軽わざ師", "name": "佐野 満", "skills": { "lv1": "疾風シップウ", "lv55": "", "lv65": "", "lv80": "", "lv100": "クロス名人メイジン" }, "aptitude": "" },
+        { "no": "2-21", "star": 2, "title": "アルゼンチンの天才児", "name": "ファン・ディアス", "skills": { "lv1": "的確テキカク", "lv55": "", "lv65": "", "lv80": "", "lv100": "戦術眼センジュツガン" }, "aptitude": "" },
+        { "no": "2-22", "star": 2, "title": "ドイツJr.代表ユースエース", "name": "カール・ハインツ・シュナイダー", "skills": { "lv1": "エースの自覚ジカク", "lv55": "", "lv65": "", "lv80": "", "lv100": "ストライカー" }, "aptitude": "" },
+        { "no": "2-23", "star": 2, "title": "フランスJr.ユース代表キャプテン", "name": "エル・シド・ピエール", "skills": { "lv1": "戦術眼センジュツガン", "lv55": "", "lv65": "", "lv80": "", "lv100": "キープ力リョク" }, "aptitude": "" },
+        { "no": "2-24", "star": 2, "title": "エースキラー", "name": "早田 誠", "skills": { "lv1": "熱血ネッケツ", "lv55": "", "lv65": "", "lv80": "", "lv100": "士気高揚シキコウヨウ" }, "aptitude": "" },
+        { "no": "2-25", "star": 2, "title": "サウジアラビアの司令塔", "name": "マーク・オワイラン", "skills": { "lv1": "信頼シンライ", "lv55": "", "lv65": "", "lv80": "", "lv100": "的確テキカク" }, "aptitude": "" },
+        { "no": "2-26", "star": 2, "title": "元南葛SCキャプテン", "name": "新田 瞬", "skills": { "lv1": "疾風シップウ", "lv55": "", "lv65": "", "lv80": "", "lv100": "信頼シンライ" }, "aptitude": "" },
+        { "no": "1-01", "star": 1, "title": "南葛のゲームメーカー", "name": "井沢 守", "skills": { "lv1": "戦術眼センジュツガン", "lv55": "", "lv65": "", "lv80": "", "lv100": "" }, "aptitude": "" },
+        { "no": "1-02", "star": 1, "title": "南葛のストライカー", "name": "来生 哲兵", "skills": { "lv1": "疾風シップウ", "lv55": "", "lv65": "", "lv80": "", "lv100": "" }, "aptitude": "" },
+        { "no": "1-03", "star": 1, "title": "南葛の切り込み隊長", "name": "滝 一", "skills": { "lv1": "士気高揚シキコウヨウ", "lv55": "", "lv65": "", "lv80": "", "lv100": "" }, "aptitude": "" },
+        { "no": "1-04", "star": 1, "title": "巨漢", "name": "高杉 真吾", "skills": { "lv1": "無尽蔵ムジンゾウ", "lv55": "", "lv65": "", "lv80": "", "lv100": "" }, "aptitude": "" },
+        { "no": "1-05", "star": 1, "title": "南葛の正ゴールキーパー", "name": "森崎 有三", "skills": { "lv1": "熱血ネッケツ", "lv55": "", "lv65": "", "lv80": "", "lv100": "" }, "aptitude": "" },
+        { "no": "1-06", "star": 1, "title": "大友中キャプテン", "name": "浦辺 反次", "skills": { "lv1": "強靭キョウジン", "lv55": "", "lv65": "", "lv80": "", "lv100": "" }, "aptitude": "" },
+        { "no": "1-07", "star": 1, "title": "大友カルテット一番手", "name": "岸田 猛", "skills": { "lv1": "疾風シップウ", "lv55": "", "lv65": "", "lv80": "", "lv100": "" }, "aptitude": "" },
+        { "no": "1-08", "star": 1, "title": "東邦の一年生エース", "name": "沢田 タケシ", "skills": { "lv1": "切れ者キモノ", "lv55": "", "lv65": "", "lv80": "", "lv100": "" }, "aptitude": "" },
+        { "no": "1-09", "star": 1, "title": "東邦もうひとりのFW", "name": "反町 一樹", "skills": { "lv1": "固い絆カタキズナ", "lv55": "", "lv65": "", "lv80": "", "lv100": "" }, "aptitude": "" },
+        { "no": "1-10", "star": 1, "title": "比良戸のテクニシャン", "name": "佐野 満", "skills": { "lv1": "キープ力リョク", "lv55": "", "lv65": "", "lv80": "", "lv100": "" }, "aptitude": "" }
+      ];
+
+      // 状態管理
+      let currentStarFilter = 'all';
+      let currentAptFilter = 'all';
+      let currentSelectedCharTag = null;
+      let currentSearchQuery = '';
+
+      // ルビ消去表示用ヘルパー
+      const RUBY_LIST = [
+        "ミライニホンダイヒョウ", "キセキタイゲンシャ", "テッペキシュゴシン", "セカイツラヌダンドウ",
+        "ショウリシュウチャクシン", "ドクダンジョウ", "ゼッコウチョウ", "エンシュツカ", "ネッケツ",
+        "キモノ", "シップウ", "シキコウヨウ", "セイミツ", "カタキズナ", "テキカク", "コウシュジザイ",
+        "メイジン", "ガマン", "キキサッチ", "ゲンカイトッパ", "キョウジン", "センジュツガン",
+        "ゼッタイシュゴ", "ムジンゾウ", "ゴウタン", "ジカク", "コウゲキキテン", "レイセイ",
+        "ムソウ", "イアツ", "ダッシュ", "ゼンリョク", "コブ", "オオゾラツバサ", "リョク"
+      ];
+
+      function cleanRubyText(str) {
+        if (!str) return '';
+        let s = String(str).trim();
+        for (const r of RUBY_LIST) {
+          if (s.endsWith(r) && s.length > r.length) {
+            s = s.slice(0, s.length - r.length).trim();
+          }
+        }
+        return s;
+      }
+
+      function normalizeText(str) {
+        if (!str) return '';
+        try {
+          return str
+            .normalize('NFKC')
+            .toLowerCase()
+            .replace(/[\u30a1-\u30f6]/g, match => String.fromCharCode(match.charCodeAt(0) - 0x60))
+            .trim();
+        } catch (e) {
+          return String(str).toLowerCase().trim();
+        }
+      }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return str
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      // DOM要素
+      const searchInput = document.getElementById('search-input');
+      const btnClearSearch = document.getElementById('btn-clear-search');
+      const charSkillsGrid = document.getElementById('char-skills-grid');
+      const noResults = document.getElementById('no-results');
+      const resultCount = document.getElementById('result-count');
+      const totalCount = document.getElementById('total-count');
+      const activeFilterContainer = document.getElementById('active-filter-container');
+      const btnRemoveCharFilter = document.getElementById('btn-remove-char-filter');
+      const btnResetAll = document.getElementById('btn-reset-all');
+      const btnNoResultReset = document.getElementById('btn-no-result-reset');
+      const charTagsContainer = document.getElementById('char-tags-container');
+
+      // スキルステップリストのレンダリング
+      function renderSkillStepsHtml(skills, star) {
+        const steps = [];
+
+        if (skills.lv1) steps.push({ lv: 'Lv.1', name: cleanRubyText(skills.lv1), cls: 'lv1' });
+        if (skills.lv55) steps.push({ lv: 'Lv.55', name: cleanRubyText(skills.lv55), cls: 'lv55' });
+        if (skills.lv65) steps.push({ lv: 'Lv.65', name: cleanRubyText(skills.lv65), cls: 'lv65' });
+        if (skills.lv80) steps.push({ lv: 'Lv.80', name: cleanRubyText(skills.lv80), cls: 'lv80' });
+        if (skills.lv100) steps.push({ lv: 'Lv.100', name: cleanRubyText(skills.lv100), cls: 'lv100' });
+
+        if (steps.length === 0) {
+          return '<div class="skill-name-text" style="color: rgba(255,255,255,0.4); font-size:12px;">所持スキル情報なし</div>';
+        }
+
+        return '<div class="skills-timeline">' +
+          steps.map(step => `
+            <div class="skill-step-item">
+              <span class="level-tag ${step.cls}">${step.lv}</span>
+              <span class="skill-name-text">${escapeHtml(step.name)}</span>
+            </div>
+          `).join('') +
+          '</div>';
+      }
+
+      // カード作成
+      function createCharCardElement(item, index) {
+        const card = document.createElement('div');
+        card.className = 'char-card soccer-card-hover card-animate';
+        card.style.animationDelay = `${(index % 12) * 0.04}s`;
+
+        const starClass = `star${item.star}`;
+        const starText = item.star === 3 ? '★3 (SSR)' : (item.star === 2 ? '★2 (SR)' : '★1 (R)');
+
+        const displayTitle = cleanRubyText(item.title);
+        const displayName = cleanRubyText(item.name);
+
+        const aptitudeHtml = item.aptitude
+          ? `<span class="aptitude-badge">適性 ${escapeHtml(item.aptitude)}</span>`
+          : '';
+
+        card.innerHTML = `
+          <div class="char-header">
+            <div class="char-title-area">
+              <span class="char-no-tag">No. ${escapeHtml(item.no)}</span>
+              ${displayTitle ? `<span class="char-sub-title">${escapeHtml(displayTitle)}</span>` : ''}
+              <h2 class="char-name">${escapeHtml(displayName)}</h2>
+            </div>
+            <div class="char-badges">
+              <span class="star-badge ${starClass}">${starText}</span>
+              ${aptitudeHtml}
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="font-size: 11px; font-weight: 700; color: #f59e0b; display: flex; align-items: center; gap: 4px;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 2v11h3v9l7-12h-4l4-8z"/>
+              </svg>
+              習得スキル・適性解放
+            </div>
+            ${renderSkillStepsHtml(item.skills, item.star)}
+          </div>
+        `;
+
+        return card;
+      }
+
+      // フィルタリング処理
+      function applyFilters() {
+        const queryNorm = normalizeText(currentSearchQuery);
+
+        const filtered = CHARACTER_SKILL_MASTER_DATA.filter(item => {
+          // 1. レアリティ
+          if (currentStarFilter !== 'all') {
+            if (String(item.star) !== String(currentStarFilter)) return false;
+          }
+
+          // 2. ポジション適性
+          if (currentAptFilter !== 'all') {
+            const apt = item.aptitude.toUpperCase();
+            if (currentAptFilter === 'GK') {
+              if (!apt.includes('GK')) return false;
+            } else if (currentAptFilter === 'FW') {
+              if (!apt.includes('CF') && !apt.includes('LWG') && !apt.includes('RWG')) return false;
+            } else if (currentAptFilter === 'MF') {
+              if (!apt.includes('OFM') && !apt.includes('OMF') && !apt.includes('DMF') && !apt.includes('LMF') && !apt.includes('RMF')) return false;
+            } else if (currentAptFilter === 'DF') {
+              if (!apt.includes('CB') && !apt.includes('LSB') && !apt.includes('RSB')) return false;
+            }
+          }
+
+          // 3. 選手クイックタグ
+          if (currentSelectedCharTag) {
+            const cleanName = cleanRubyText(item.name);
+            if (!cleanName.includes(currentSelectedCharTag) && !item.name.includes(currentSelectedCharTag)) return false;
+          }
+
+          // 4. フリーワード検索
+          if (queryNorm) {
+            const titleNorm = normalizeText(item.title);
+            const nameNorm = normalizeText(item.name);
+            const cleanTitleNorm = normalizeText(cleanRubyText(item.title));
+            const cleanNameNorm = normalizeText(cleanRubyText(item.name));
+            const aptNorm = normalizeText(item.aptitude);
+            const skillsNorm = normalizeText(Object.values(item.skills).join(' '));
+
+            const isMatch = titleNorm.includes(queryNorm) ||
+              nameNorm.includes(queryNorm) ||
+              cleanTitleNorm.includes(queryNorm) ||
+              cleanNameNorm.includes(queryNorm) ||
+              aptNorm.includes(queryNorm) ||
+              skillsNorm.includes(queryNorm);
+
+            if (!isMatch) return false;
+          }
+
+          return true;
+        });
+
+        renderGrid(filtered);
+      }
+
+      // グリッド描画
+      function renderGrid(items) {
+        charSkillsGrid.innerHTML = '';
+        resultCount.textContent = items.length;
+        totalCount.textContent = CHARACTER_SKILL_MASTER_DATA.length;
+
+        const isFiltered = currentStarFilter !== 'all' ||
+          currentAptFilter !== 'all' ||
+          currentSelectedCharTag !== null ||
+          currentSearchQuery.trim() !== '';
+
+        activeFilterContainer.style.display = isFiltered ? 'flex' : 'none';
+
+        if (items.length === 0) {
+          charSkillsGrid.style.display = 'none';
+          noResults.style.display = 'block';
+        } else {
+          charSkillsGrid.style.display = 'grid';
+          noResults.style.display = 'none';
+
+          const fragment = document.createDocumentFragment();
+          items.forEach((item, idx) => {
+            fragment.appendChild(createCharCardElement(item, idx));
+          });
+          charSkillsGrid.appendChild(fragment);
+        }
+      }
+
+      // リセット
+      function resetAllFilters() {
+        currentStarFilter = 'all';
+        currentAptFilter = 'all';
+        currentSelectedCharTag = null;
+        currentSearchQuery = '';
+        searchInput.value = '';
+        btnClearSearch.style.display = 'none';
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          if (btn.dataset.value === 'all') {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+
+        document.querySelectorAll('.char-quick-tag').forEach(tag => {
+          tag.classList.remove('active');
+        });
+
+        applyFilters();
+      }
+
+      // イベントリスナー
+      function setupEvents() {
+        // 検索入力
+        searchInput.addEventListener('input', (e) => {
+          currentSearchQuery = e.target.value;
+          btnClearSearch.style.display = currentSearchQuery ? 'block' : 'none';
+          applyFilters();
+        });
+
+        // 検索クリア
+        btnClearSearch.addEventListener('click', () => {
+          searchInput.value = '';
+          currentSearchQuery = '';
+          btnClearSearch.style.display = 'none';
+          searchInput.focus();
+          applyFilters();
+        });
+
+        // フィルターボタン群
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const filterType = e.target.dataset.filterType;
+            const filterValue = e.target.dataset.value;
+
+            const parentGroup = e.target.closest('.filter-buttons');
+            if (parentGroup) {
+              parentGroup.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            }
+            e.target.classList.add('active');
+
+            if (filterType === 'star') {
+              currentStarFilter = filterValue;
+            } else if (filterType === 'apt') {
+              currentAptFilter = filterValue;
+            }
+
+            applyFilters();
+          });
+        });
+
+        // 選手クイックタグ
+        document.querySelectorAll('.char-quick-tag').forEach(tag => {
+          tag.addEventListener('click', (e) => {
+            const charName = e.target.dataset.char;
+            if (currentSelectedCharTag === charName) {
+              currentSelectedCharTag = null;
+              e.target.classList.remove('active');
+            } else {
+              document.querySelectorAll('.char-quick-tag').forEach(t => t.classList.remove('active'));
+              currentSelectedCharTag = charName;
+              e.target.classList.add('active');
+            }
+            applyFilters();
+          });
+        });
+
+        // リセットボタン類
+        btnRemoveCharFilter.addEventListener('click', resetAllFilters);
+        btnResetAll.addEventListener('click', resetAllFilters);
+        btnNoResultReset.addEventListener('click', resetAllFilters);
+      }
+
+      // 初期化
+      setupEvents();
+      applyFilters();
+
+    })();
+  </script>
+</body>
+
+</html>
