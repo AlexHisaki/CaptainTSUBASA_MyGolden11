@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>キャプテン翼マイゴールデンⅪ スキルデータベース | Skill Database</title>
+  <meta name="description" content="キャプテン翼マイゴールデンⅪのスキル情報（発動条件・効果・GK制限）を検索・閲覧できるリアルタイムデータベース">
+
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #07130c;
+      background-image:
+        linear-gradient(90deg, rgba(16, 185, 129, 0.04) 50%, transparent 50%),
+        radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.18), transparent 75%),
+        radial-gradient(circle at 50% 100%, rgba(6, 182, 212, 0.12), transparent 75%);
+      background-size: 80px 100%, 100% 100%, 100% 100%;
+      color: #f3f4f6;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans JP", sans-serif;
+      min-height: 100vh;
+      padding: 24px 16px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ヘッダー */
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 14px;
+      border-radius: 9999px;
+      background-color: rgba(6, 78, 59, 0.8);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #34d399 0%, #a7f3d0 50%, #f59e0b 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    @media (min-width: 640px) {
+      h1 {
+        font-size: 3rem;
+      }
+    }
+
+    .description {
+      color: rgba(209, 250, 229, 0.75);
+      font-size: 14px;
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* 更新日 */
+    .update-date {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .update-date span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      background: rgba(6, 78, 59, 0.5);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: #a7f3d0;
+      font-size: 12px;
+    }
+
+    /* 検索セクション */
+    .search-section {
+      margin-bottom: 32px;
+    }
+
+    .search-box-wrapper {
+      position: relative;
+      max-width: 720px;
+      margin: 0 auto 16px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      fill: #f59e0b;
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 14px 44px 14px 48px;
+      background-color: rgba(13, 33, 23, 0.95);
+      border: 2px solid #1b432e;
+      border-radius: 16px;
+      color: #ffffff;
+      font-size: 16px;
+      outline: none;
+      transition: all 0.25s ease;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .search-input:focus {
+      border-color: #10b981;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+    }
+
+    .clear-btn {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.5);
+      font-size: 18px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .clear-btn:hover {
+      color: #f59e0b;
+    }
+
+    /* ステータスバー */
+    .status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      max-width: 960px;
+      margin: 0 auto 16px;
+      font-size: 13px;
+      color: #a7f3d0;
+    }
+
+    .result-count-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background-color: #0d2117;
+      border: 1px solid #1b432e;
+      border-radius: 12px;
+    }
+
+    .result-count-num {
+      color: #f59e0b;
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .active-filter-badge {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      border-radius: 9999px;
+      color: #a7f3d0;
+      font-weight: 700;
+    }
+
+    .remove-filter-btn {
+      background: none;
+      border: none;
+      color: #f59e0b;
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 4px;
+    }
+
+    .reset-link {
+      color: #a7f3d0;
+      text-decoration: underline;
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-size: 12px;
+    }
+
+    .reset-link:hover {
+      color: #f59e0b;
+    }
+
+    /* 該当なし表示 */
+    .no-results {
+      display: none;
+      text-align: center;
+      padding: 60px 20px;
+      background: rgba(13, 33, 23, 0.6);
+      border: 1px dashed #1b432e;
+      border-radius: 20px;
+      margin: 40px auto;
+      max-width: 600px;
+    }
+
+    .no-results-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f59e0b;
+      margin-bottom: 8px;
+    }
+
+    .reset-btn-large {
+      margin-top: 16px;
+      padding: 10px 24px;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border: none;
+      border-radius: 12px;
+      color: #ffffff;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    }
+
+    .reset-btn-large:hover {
+      background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(27, 67, 46, 0.5);
+      color: rgba(167, 243, 208, 0.5);
+      font-size: 12px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <!-- サイト共通タブナビゲーション -->
+    <nav class="site-nav">
+      <a href="index.html" class="site-nav-item">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path
+            d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8 0-.46.05-.91.14-1.35L8.5 15v1c0 1.1.9 2 2 2h3v1.93c-1.39.7-2.96 1.07-4.5 1.07zm6.9-3.09c-.27-.54-.82-.91-1.45-.91h-1v-3c0-.55-.45-1-1-1H9v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 1.83-.62 3.52-1.9 4.91z" />
+        </svg>
+        コンボ・連携技DB
+      </a>
+      <a href="skill.html" class="site-nav-item active">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M7 2v11h3v9l7-12h-4l4-8z" />
+        </svg>
+        スキル一覧DB
+      </a>
+    </nav>
+
+    <!-- ヘッダー -->
+    <header>
+      <div class="badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M7 2v11h3v9l7-12h-4l4-8z" />
+        </svg>
+        SKILL DATABASE
+      </div>
+      <h1>スキル一覧データベース</h1>
+      <p class="description">
+        <span style="display: inline-block;">キャプテン翼 マイゴールデンⅪ に登場するスキルの</span><span
+          style="display: inline-block;">発動条件・効果・GK制限をリアルタイム検索！</span><br>
+        <span style="display: inline-block;">キーワード検索や各種フィルターで、</span><span
+          style="display: inline-block;">あなたのチーム編成に最適なスキルを素早くチェックできます。</span>
+      </p>
+    </header>
+
+    <!-- 更新日 -->
+    <div class="update-date">
+      <span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#f59e0b">
+          <path
+            d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" />
+        </svg>
+        データ更新日: 2026年9月15日
+      </span>
+    </div>
+
+    <!-- 検索＆フィルタ制限セクション -->
+    <section class="search-section">
+      <div class="search-box-wrapper">
+        <svg class="search-icon" viewBox="0 0 24 24">
+          <path
+            d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+        </svg>
+        <input type="text" id="search-input" class="search-input" placeholder="スキル名、条件、効果で検索... (例: インパクト, スピード, ドリブル)"
+          autocomplete="off">
+        <button id="btn-clear-search" class="clear-btn">&times;</button>
+      </div>
+
+      <!-- フィルターボタン群 -->
+      <div class="filter-group-container">
+        <!-- MaxLv フィルター -->
+        <div style="display: flex; align-items: center;">
+          <span class="filter-label">MaxLv:</span>
+          <div class="filter-buttons" id="maxlv-filter-group">
+            <button class="filter-btn active" data-filter-type="maxlv" data-value="all">すべて</button>
+            <button class="filter-btn" data-filter-type="maxlv" data-value="Lv.1">Lv.1</button>
+            <button class="filter-btn" data-filter-type="maxlv" data-value="Lv.3">Lv.3</button>
+          </div>
+        </div>
+
+        <!-- GK フィルター -->
+        <div style="display: flex; align-items: center;">
+          <span class="filter-label">GK制限:</span>
+          <div class="filter-buttons" id="gk-filter-group">
+            <button class="filter-btn active" data-filter-type="gk" data-value="all">すべて</button>
+            <button class="filter-btn" data-filter-type="gk" data-value="ok">GK可</button>
+            <button class="filter-btn" data-filter-type="gk" data-value="ng">GK不可</button>
+          </div>
+        </div>
+
+        <!-- 発動タイプ / 属性フィルター -->
+        <div style="display: flex; align-items: center;">
+          <span class="filter-label">属性タグ:</span>
+          <div class="filter-buttons" id="tag-filter-group">
+            <button class="filter-btn active" data-filter-type="tag" data-value="all">すべて</button>
+            <button class="filter-btn" data-filter-type="tag" data-value="試合開始時">試合開始時</button>
+            <button class="filter-btn" data-filter-type="tag" data-value="シュート">シュート</button>
+            <button class="filter-btn" data-filter-type="tag" data-value="突破">突破・ドリブル</button>
+            <button class="filter-btn" data-filter-type="tag" data-value="守備">守備・パスカット</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ステータスバー -->
+      <div class="status-bar" style="margin-top: 18px;">
+        <div class="result-count-badge">
+          <span>表示件数:</span>
+          <span id="result-count" class="result-count-num">0</span>
+          <span>/</span>
+          <span id="total-count">0</span>
+          <span>件</span>
+        </div>
+
+        <div id="active-filter-container" class="active-filter-badge">
+          <span>選択フィルター適用中</span>
+          <button id="btn-remove-char-filter" class="remove-filter-btn">&times;</button>
+        </div>
+
+        <div>
+          <button id="btn-reset-all" class="reset-link">すべての検索・フィルターを解除</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- メインコンテンツ -->
+    <main>
+      <!-- 該当なしメッセージ -->
+      <div id="no-results" class="no-results">
+        <div class="no-results-title">該当するスキルが見つかりませんでした</div>
+        <p style="color: rgba(209, 250, 229, 0.6); font-size: 14px;">検索キーワードを変更するか、フィルター条件をリセットしてみてください。</p>
+        <button id="btn-no-result-reset" class="reset-btn-large">検索・フィルターをリセット</button>
+      </div>
+
+      <!-- スキルカード一覧グリッド -->
+      <div id="skills-grid" class="skills-grid"></div>
+    </main>
+
+    <footer>
+      <p>キャプテン翼 マイゴールデンⅪ スキルデータベース &copy; 2026</p>
+    </footer>
+
+  </div>
+
+  <!-- JavaScript アプリケーションロジック -->
+  <script>
+    (function () {
+      // skilllist.xlsx から完全抽出した全27スキルのマスターデータ
+      const SKILL_MASTER_DATA = [
+        {
+          no: "1",
+          name: "アイアンタックル",
+          maxLv: "Lv.1",
+          condition: "試合開始時",
+          effect: "試合終了まで自身のシュートブロック成功率、ボディ、スタミナを上昇する",
+          gk: "",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "2",
+          name: "アンストッパブル",
+          maxLv: "Lv.1",
+          condition: "試合中に自身が1回シュート成功",
+          effect: "以降自身のパワー、シュートレンジが大きく上昇し、シュート成功率がとても大きく上昇する",
+          gk: "不可",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "3",
+          name: "ゲームメーカー",
+          maxLv: "Lv.1",
+          condition: "試合開始時、自身のポジションがOMF/DMFのいずれかの時",
+          effect: "試合終了まで自身のビジョンとパワーが大きく上昇する",
+          gk: "不可",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "4",
+          name: "スーパー・インパクト",
+          maxLv: "Lv.1",
+          condition: "試合開始時",
+          effect: "試合終了まで自身のシュート成功率、パワー、ビジョンを上昇する",
+          gk: "",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "5",
+          name: "ストームエラシコ",
+          maxLv: "Lv.1",
+          condition: "試合開始時",
+          effect: "試合終了まで自身の突破力、スピード、テクニックを少し上昇する",
+          gk: "",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "6",
+          name: "チャンスの創造主",
+          maxLv: "Lv.3",
+          condition: "試合開始時、自身がポジションランクA以上に配置されている、かつ味方・相手含め全選手の中でテクニック2位以上の時、試合終了まで発動。",
+          effect: "【Lv.1】自身のナイスパス成功率とシュートレンジが少し上昇する。\n\n【Lv.2】自身のナイスパス成功率とシュートレンジが上昇する。\n\n【Lv.3】自身のナイスパス成功率とシュートレンジが大きく上昇する。",
+          gk: "不可",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "7",
+          name: "ネオ・インパクト",
+          maxLv: "Lv.1",
+          condition: "試合開始時",
+          effect: "試合終了まで自身のシュート成功率、パワー、ビジョンを少し上昇する",
+          gk: "",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "8",
+          name: "ヘビータックル",
+          maxLv: "Lv.1",
+          condition: "試合開始時",
+          effect: "試合終了まで自身のシュートブロック成功率、ボディ、スタミナを少し上昇する",
+          gk: "",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "9",
+          name: "威風堂々",
+          maxLv: "Lv.3",
+          condition: "試合開始時、自身がポジションランクA以上に配置されている、かつ味方・相手含め全選手の中でスタミナ2位以上の時、試合終了まで発動。",
+          effect: "【Lv.1】自身のセカンドボール獲得率とロングフィード選択率が少し上昇する。\n\n【Lv.2】自身のセカンドボール獲得率とロングフィード選択率が上昇する。\n\n【Lv.3】自身のセカンドボール獲得率とロングフィード選択率が大きく上昇する。",
+          gk: "",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "10",
+          name: "強者の風格",
+          maxLv: "Lv.1",
+          condition: "試合開始時、自身がポジションランクA以上のポジションに配置されている時",
+          effect: "試合終了まで自身のパワー、テクニック、ボディを上昇する",
+          gk: "",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "11",
+          name: "極限の集中",
+          maxLv: "Lv.3",
+          condition: "試合開始時、自身がポジションランクA以上に配置されている、かつ味方・相手含め全選手の中でボディ2位以上の時、試合終了まで発動。",
+          effect: "【Lv.1】自身のセカンドボール獲得率とパスカット率が少し上昇する。\n\n【Lv.2】自身のセカンドボール獲得率とパスカット率が上昇する。\n\n【Lv.3】自身のセカンドボール獲得率とパスカット率が大きく上昇する。",
+          gk: "不可",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "12",
+          name: "攻撃の起点",
+          maxLv: "Lv.1",
+          condition: "試合開始時、自身のポジションがLWG/RWG/LMF/RMFのいずれかの時",
+          effect: "試合終了まで自身のスタミナと突破力が大きく上昇する",
+          gk: "不可",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "13",
+          name: "縦横無尽の疾走",
+          maxLv: "Lv.3",
+          condition: "試合開始時、自身がポジションランクA以上に配置されている、かつ味方・相手含め全選手の中でスピード2位以上の時、試合終了まで発動。",
+          effect: "【Lv.1】自身のドリブル移動距離とスピードとテクニックが少し上昇する。\n\n【Lv.2】自身のドリブル移動距離が上昇し、スピードとテクニックが少し上昇する。\n\n【Lv.3】自身のドリブル移動距離が大きく上昇し、スピードとテクニックが上昇する。",
+          gk: "",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "14",
+          name: "勝利への渇望",
+          maxLv: "Lv.3",
+          condition: "試合開始時、自身がポジションランクA以上に配置されている、かつ味方・相手含め全選手の中でパワー2位以上の時、試合終了まで発動。",
+          effect: "【Lv.1】自身のパワーと突破力と突破実行率が少し上昇する。\n\n【Lv.2】自身のパワーが上昇し、突破力と突破実行率が少し上昇する。\n\n【Lv.3】自身のパワーが大きく上昇し、突破力と突破実行率が上昇する。",
+          gk: "不可",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "15",
+          name: "勝利への執着心",
+          maxLv: "Lv.1",
+          condition: "試合開始時、自身のポジションがCF/RWG/LWG/OMF/LMF/RMFのいずれかの時",
+          effect: "試合終了まで自身のパワーとスタミナが上昇し、シュート成功率が大きく上昇する",
+          gk: "不可",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "16",
+          name: "精密",
+          maxLv: "Lv.1",
+          condition: "試合開始時、味方・相手含め全選手の中でテクニックの高さが3位の場合",
+          effect: "試合終了まで自身のシュート成功率とパスカット率が大きく上昇する",
+          gk: "不可",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "17",
+          name: "絶好調",
+          maxLv: "Lv.1",
+          condition: "試合開始時、自身のポジションがDMF/CB/RWG/LWGのいずれかの時",
+          effect: "試合終了まで自身のパスカット率、セカンドボール獲得率、シュートブロック成功率が大きく上昇する",
+          gk: "不可",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "18",
+          name: "絶対守護",
+          maxLv: "Lv.1",
+          condition: "試合開始時、自身のポジションがCB/GKのいずれかの時",
+          effect: "試合終了まで自身のパワーとシュートブロック成功率が大きく上昇する",
+          gk: "",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "19",
+          name: "全力",
+          maxLv: "Lv.1",
+          condition: "試合開始時",
+          effect: "試合終了まで自身のビジョン、パワー、スタミナを上昇する",
+          gk: "",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "20",
+          name: "弾丸ライナー",
+          maxLv: "Lv.3",
+          condition: "試合開始時、味方・相手含め全選手の中でパワー1位の時、試合終了まで発動。",
+          effect: "【Lv.1】自身のシュート成功率とシュートレンジが少し上昇する。\n\n【Lv.2】自身のシュート成功率とシュートレンジが上昇する。\n\n【Lv.3】自身のシュート成功率とシュートレンジが大きく上昇する。",
+          gk: "",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "21",
+          name: "天賦の輝き",
+          maxLv: "Lv.3",
+          condition: "試合開始時、味方・相手含め全選手の中でボディ1位の時、試合終了まで発動。",
+          effect: "【Lv.1】自身のシュートブロック成功率とパワーとスピードが少し上昇する。\n\n【Lv.2】自身のシュートブロック成功率が上昇し、パワーとスピードが少し上昇する。\n\n【Lv.3】自身のシュートブロック成功率が大きく上昇し、パワーとスピードが上昇する。",
+          gk: "",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "22",
+          name: "独壇場のドリブル",
+          maxLv: "Lv.1",
+          condition: "味方・相手含め全選手の中でスピードの高さが1位で突破行動を行う時",
+          effect: "自身の突破力をその突破行動時において、とても大きく上昇し、マッチアップ相手のスタミナを一定期間大きく減少させる",
+          gk: "不可",
+          notes: "【発動上限数：5回】"
+        },
+        {
+          no: "23",
+          name: "放物線の美学",
+          maxLv: "Lv.3",
+          condition: "試合開始時、味方・相手含め全選手の中でテクニック1位の時、試合終了まで発動。",
+          effect: "【Lv.1】自身のクロス実行率とロングフィード選択率が少し上昇する。\n\n【Lv.2】自身のクロス実行率とロングフィード選択率が上昇する。\n\n【Lv.3】自身のクロス実行率とロングフィード選択率が大きく上昇する。",
+          gk: "不可",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "24",
+          name: "無重力ステップ",
+          maxLv: "Lv.3",
+          condition: "試合開始時、味方・相手含め全選手の中でスピード1位の時、試合終了まで発動。",
+          effect: "【Lv.1】自身の突破力とシュート実行率が少し上昇する。\n\n【Lv.2】自身の突破力とシュート実行率が上昇する。\n\n【Lv.3】自身の突破力とシュート実行率が大きく上昇する。",
+          gk: "",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "25",
+          name: "無尽蔵のスタミナ",
+          maxLv: "Lv.3",
+          condition: "試合開始時、味方・相手含め全選手の中でスタミナ1位の時、試合終了まで発動。",
+          effect: "【Lv.1】自身のスタミナと突破力とドリブル移動距離が少し上昇する。\n\n【Lv.2】自身のスタミナが上昇し、突破力とドリブル移動距離が少し上昇する。\n\n【Lv.3】自身のスタミナが大きく上昇し、突破力とドリブル移動距離が上昇する。",
+          gk: "",
+          notes: "【発動上限数：1回】"
+        },
+        {
+          no: "26",
+          name: "無双",
+          maxLv: "Lv.1",
+          condition: "味方・相手含め全選手の中でビジョンの高さが3位以上でパスを受け取った時",
+          effect: "自身のボディ、テクニック、スピード、パワーを一定期間とても大きく上昇する",
+          gk: "不可",
+          notes: "【発動上限数：3回】"
+        },
+        {
+          no: "27",
+          name: "連動の極意",
+          maxLv: "Lv.3",
+          condition: "試合開始時、自身がポジションランクA以上に配置されている、かつ味方・相手含め全選手の中でビジョン2位以上の時、試合終了まで発動。",
+          effect: "【Lv.1】自身のビジョンとパスカット率が少し上昇する。\n\n【Lv.2】自身のビジョンとパスカット率が上昇する。\n\n【Lv.3】自身のビジョンとパスカット率が大きく上昇する。",
+          gk: "",
+          notes: "【発動上限数：1回】"
+        }
+      ];
+
+      // 状態管理
+      let currentMaxLvFilter = 'all';
+      let currentGkFilter = 'all';
+      let currentTagFilter = 'all';
+      let currentSearchQuery = '';
+
+      // DOM要素
+      const searchInput = document.getElementById('search-input');
+      const btnClearSearch = document.getElementById('btn-clear-search');
+      const skillsGrid = document.getElementById('skills-grid');
+      const noResults = document.getElementById('no-results');
+      const resultCount = document.getElementById('result-count');
+      const totalCount = document.getElementById('total-count');
+      const activeFilterContainer = document.getElementById('active-filter-container');
+      const btnRemoveCharFilter = document.getElementById('btn-remove-char-filter');
+      const btnResetAll = document.getElementById('btn-reset-all');
+      const btnNoResultReset = document.getElementById('btn-no-result-reset');
+
+      // ひらがな・カタカナ正規化
+      function normalizeText(str) {
+        if (!str) return '';
+        try {
+          return str
+            .normalize('NFKC')
+            .toLowerCase()
+            .replace(/[\u30a1-\u30f6]/g, match => String.fromCharCode(match.charCodeAt(0) - 0x60))
+            .trim();
+        } catch (e) {
+          return String(str).toLowerCase().trim();
+        }
+      }
+
+      // 効果文のパース表示（【Lv.1】等のレベル別改行を美しいHTMLブロックに変換）
+      function formatEffectHtml(effectText) {
+        if (!effectText) return '';
+        if (effectText.includes('【Lv.')) {
+          const parts = effectText.split(/\n+/).filter(p => p.trim());
+          return '<div class="skill-effect-container">' +
+            parts.map(part => {
+              const trimmed = part.trim();
+              const match = trimmed.match(/^【(Lv\.\d+)】(.*)/);
+              if (match) {
+                return `<div class="effect-lv-box"><span class="effect-lv-tag">【${match[1]}】</span>${escapeHtml(match[2])}</div>`;
+              }
+              return `<div class="effect-lv-box">${escapeHtml(trimmed)}</div>`;
+            }).join('') +
+            '</div>';
+        }
+        return `<div class="skill-condition-text" style="border-left-color: #34d399; background: rgba(13, 33, 23, 0.6);">${escapeHtml(effectText)}</div>`;
+      }
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return str
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      // カード1件の描画
+      function createSkillCardElement(skill, index) {
+        const card = document.createElement('div');
+        card.className = 'skill-card soccer-card-hover card-animate';
+        card.style.animationDelay = `${(index % 12) * 0.04}s`;
+
+        const isLv3 = skill.maxLv.includes('3');
+        const maxLvClass = isLv3 ? 'lv3' : 'lv1';
+        const isGkNg = skill.gk === '不可';
+        const gkBadgeHtml = isGkNg
+          ? `<span class="badge-gk ng">GK不可</span>`
+          : `<span class="badge-gk ok">GK可</span>`;
+
+        card.innerHTML = `
+          <div class="skill-header">
+            <div class="skill-title-area">
+              <span class="skill-no-tag">No. ${escapeHtml(skill.no)}</span>
+              <h2 class="skill-name">${escapeHtml(skill.name)}</h2>
+            </div>
+            <div class="skill-badges">
+              <span class="badge-maxlv ${maxLvClass}">${escapeHtml(skill.maxLv.trim())}</span>
+              ${gkBadgeHtml}
+            </div>
+          </div>
+
+          <div class="skill-section">
+            <div class="skill-section-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+              </svg>
+              発動条件
+            </div>
+            <div class="skill-condition-text">
+              ${escapeHtml(skill.condition)}
+            </div>
+          </div>
+
+          <div class="skill-section">
+            <div class="skill-section-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+              </svg>
+              スキル効果
+            </div>
+            ${formatEffectHtml(skill.effect)}
+          </div>
+
+          ${skill.notes ? `
+            <div class="skill-notes">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+              </svg>
+              ${escapeHtml(skill.notes)}
+            </div>
+          ` : ''}
+        `;
+
+        return card;
+      }
+
+      // フィルタリング処理
+      function applyFilters() {
+        const queryNorm = normalizeText(currentSearchQuery);
+
+        const filtered = SKILL_MASTER_DATA.filter(skill => {
+          // 1. MaxLv フィルター
+          if (currentMaxLvFilter !== 'all') {
+            if (!skill.maxLv.includes(currentMaxLvFilter)) return false;
+          }
+
+          // 2. GK フィルター
+          if (currentGkFilter === 'ok') {
+            if (skill.gk === '不可') return false;
+          } else if (currentGkFilter === 'ng') {
+            if (skill.gk !== '不可') return false;
+          }
+
+          // 3. 属性タグ フィルター
+          if (currentTagFilter !== 'all') {
+            const combinedText = `${skill.name} ${skill.condition} ${skill.effect} ${skill.notes}`;
+            if (currentTagFilter === '試合開始時') {
+              if (!skill.condition.includes('試合開始時')) return false;
+            } else if (currentTagFilter === 'シュート') {
+              if (!combinedText.includes('シュート')) return false;
+            } else if (currentTagFilter === '突破') {
+              if (!combinedText.includes('突破') && !combinedText.includes('ドリブル')) return false;
+            } else if (currentTagFilter === '守備') {
+              if (!combinedText.includes('パスカット') && !combinedText.includes('ブロック') && !combinedText.includes('タックル')) return false;
+            }
+          }
+
+          // 4. キーワード検索
+          if (queryNorm) {
+            const nameNorm = normalizeText(skill.name);
+            const condNorm = normalizeText(skill.condition);
+            const effNorm = normalizeText(skill.effect);
+            const notesNorm = normalizeText(skill.notes);
+
+            const isMatch = nameNorm.includes(queryNorm) ||
+              condNorm.includes(queryNorm) ||
+              effNorm.includes(queryNorm) ||
+              notesNorm.includes(queryNorm);
+
+            if (!isMatch) return false;
+          }
+
+          return true;
+        });
+
+        renderGrid(filtered);
+      }
+
+      // グリッド描画
+      function renderGrid(skills) {
+        skillsGrid.innerHTML = '';
+        resultCount.textContent = skills.length;
+        totalCount.textContent = SKILL_MASTER_DATA.length;
+
+        const isFiltered = currentMaxLvFilter !== 'all' ||
+          currentGkFilter !== 'all' ||
+          currentTagFilter !== 'all' ||
+          currentSearchQuery.trim() !== '';
+
+        activeFilterContainer.style.display = isFiltered ? 'flex' : 'none';
+
+        if (skills.length === 0) {
+          skillsGrid.style.display = 'none';
+          noResults.style.display = 'block';
+        } else {
+          skillsGrid.style.display = 'grid';
+          noResults.style.display = 'none';
+
+          const fragment = document.createDocumentFragment();
+          skills.forEach((skill, idx) => {
+            fragment.appendChild(createSkillCardElement(skill, idx));
+          });
+          skillsGrid.appendChild(fragment);
+        }
+      }
+
+      // リセット処理
+      function resetAllFilters() {
+        currentMaxLvFilter = 'all';
+        currentGkFilter = 'all';
+        currentTagFilter = 'all';
+        currentSearchQuery = '';
+        searchInput.value = '';
+        btnClearSearch.style.display = 'none';
+
+        // ボタンのactive表示更新
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          if (btn.dataset.value === 'all') {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+
+        applyFilters();
+      }
+
+      // イベントリスナーのセットアップ
+      function setupEvents() {
+        // 検索窓入力
+        searchInput.addEventListener('input', (e) => {
+          currentSearchQuery = e.target.value;
+          btnClearSearch.style.display = currentSearchQuery ? 'block' : 'none';
+          applyFilters();
+        });
+
+        // 検索クリアボタン
+        btnClearSearch.addEventListener('click', () => {
+          searchInput.value = '';
+          currentSearchQuery = '';
+          btnClearSearch.style.display = 'none';
+          searchInput.focus();
+          applyFilters();
+        });
+
+        // フィルターボタン群
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const filterType = e.target.dataset.filterType;
+            const filterValue = e.target.dataset.value;
+
+            // 同じグループのボタン活性解除
+            const parentGroup = e.target.closest('.filter-buttons');
+            if (parentGroup) {
+              parentGroup.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            }
+            e.target.classList.add('active');
+
+            if (filterType === 'maxlv') {
+              currentMaxLvFilter = filterValue;
+            } else if (filterType === 'gk') {
+              currentGkFilter = filterValue;
+            } else if (filterType === 'tag') {
+              currentTagFilter = filterValue;
+            }
+
+            applyFilters();
+          });
+        });
+
+        // リセットボタン類
+        btnRemoveCharFilter.addEventListener('click', resetAllFilters);
+        btnResetAll.addEventListener('click', resetAllFilters);
+        btnNoResultReset.addEventListener('click', resetAllFilters);
+      }
+
+      // 初期化
+      setupEvents();
+      applyFilters();
+
+    })();
+  </script>
+</body>
+
+</html>
